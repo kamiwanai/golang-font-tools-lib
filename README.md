@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./golang%20fonttools.png" alt="fonttools logo" width="240">
+  <img src="./golang%20fonttools.png" alt="fonttools logo" width="420">
 </p>
 
 # fonttools
