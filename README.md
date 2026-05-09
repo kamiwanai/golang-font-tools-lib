@@ -6,6 +6,8 @@
 
 Small Go library for reading OpenType font data and exporting GPOS PairPos kerning.
 
+Repository: https://github.com/kamiwanai/golang-font-tools
+
 This is not a full Go version of Python `fontTools`. It has a focused scope:
 read font tables, read simple font metadata, read glyph names, read Unicode cmap data,
 and extract GPOS kerning pairs.
@@ -220,7 +222,7 @@ Advanced users can also decode a single PairPos subtable with:
 
 ### 6. Use The Command Line Example
 
-The repository includes a small command that prints kerning pairs:
+The repository at https://github.com/kamiwanai/golang-font-tools includes a small command that prints kerning pairs:
 
 ```bash
 go run ./cmd/export-gpos-kerning MyFont.ttf
