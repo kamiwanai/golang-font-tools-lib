@@ -192,8 +192,8 @@ backend, embedded firmware, etc.), a commercial license is available.
 
 | Scope | Price | What you get |
 |-------|-------|-------------|
-| Single product / company | Contact for pricing | Proprietary license, no source disclosure obligation, 1 year of updates |
-| OEM / redistribution | Contact for pricing | Sublicensing rights, custom terms |
+| Single product / company | $700/year | Proprietary license, no source disclosure obligation, 1 year of updates |
+| OEM / redistribution | $2,000/year | Sublicensing rights, custom terms |
 
 Contact: **inari1337@gmail.com**
 
