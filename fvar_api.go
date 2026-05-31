@@ -5,8 +5,8 @@
 package fonttools
 
 import (
-	"github.com/kamiwanai/fonttools/fvar"
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/fvar"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 // ExtractFVAR reads a font file and returns the parsed fvar (Font Variations) table.

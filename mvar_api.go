@@ -5,8 +5,8 @@
 package fonttools
 
 import (
-	"github.com/kamiwanai/fonttools/mvar"
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/mvar"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 // ExtractMVAR reads a font file and returns the parsed MVAR (Metrics Variations) table.

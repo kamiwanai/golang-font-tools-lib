@@ -5,8 +5,8 @@
 package fonttools
 
 import (
-	"github.com/kamiwanai/fonttools/vvar"
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/vvar"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 // ExtractVVAR reads a font file and returns the parsed VVAR (Vertical Metrics Variations) table.

@@ -8,7 +8,7 @@ import (
 	"encoding/binary"
 	"testing"
 
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 	"golang.org/x/image/font/gofont/goregular"
 )
 

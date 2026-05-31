@@ -5,8 +5,8 @@
 package fonttools
 
 import (
-	"github.com/kamiwanai/fonttools/gsub"
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/gsub"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 func ExtractGSUBReverseSubst(path string) ([]gsub.ReverseSubst, error) {

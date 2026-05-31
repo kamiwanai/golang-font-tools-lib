@@ -5,8 +5,8 @@
 package fonttools
 
 import (
-	"github.com/kamiwanai/fonttools/hvar"
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/hvar"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 // ExtractHVAR reads a font file and returns the parsed HVAR (Horizontal Metrics Variations) table.

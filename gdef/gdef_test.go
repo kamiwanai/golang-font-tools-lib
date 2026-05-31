@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"golang.org/x/image/font/gofont/goregular"
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 func putU16(buf []byte, offset int, v uint16) {

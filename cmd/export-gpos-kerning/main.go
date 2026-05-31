@@ -9,7 +9,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/kamiwanai/fonttools"
+	"github.com/kamiwanai/golang-font-tools-lib"
 )
 
 func main() {

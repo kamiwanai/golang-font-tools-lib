@@ -8,7 +8,7 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/kamiwanai/fonttools/hvar"
+	"github.com/kamiwanai/golang-font-tools-lib/hvar"
 )
 
 // ---------- Value Tag Constants ----------

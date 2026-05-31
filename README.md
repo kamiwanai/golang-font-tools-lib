@@ -5,10 +5,10 @@
 Go library for reading OpenType font data. Not a port of Python fontTools —
 narrow scope: parse tables, extract structured data, return Go types.
 
-[![CI](https://github.com/kamiwanai/golang-font-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/kamiwanai/golang-font-tools/actions/workflows/ci.yml)
+[![CI](https://github.com/kamiwanai/golang-font-tools-lib/actions/workflows/ci.yml/badge.svg)](https://github.com/kamiwanai/golang-font-tools-lib/actions/workflows/ci.yml)
 
 ```
-go get github.com/kamiwanai/fonttools
+go get github.com/kamiwanai/golang-font-tools-lib
 ```
 
 Requires Go 1.22+. Depends only on `golang.org/x/image`.
@@ -84,9 +84,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/kamiwanai/fonttools"
-	"github.com/kamiwanai/fonttools/gsub"
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib"
+	"github.com/kamiwanai/golang-font-tools-lib/gsub"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 func main() {

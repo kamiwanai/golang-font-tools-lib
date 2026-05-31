@@ -5,8 +5,8 @@
 package fonttools
 
 import (
-	"github.com/kamiwanai/fonttools/opentype"
-	"github.com/kamiwanai/fonttools/stat"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/stat"
 )
 
 // ExtractSTAT reads a font file and returns the parsed STAT (Style Attributes) table.

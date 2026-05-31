@@ -5,8 +5,8 @@
 package fonttools
 
 import (
-	"github.com/kamiwanai/fonttools/gdef"
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/gdef"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 // ExtractGDEF reads a font file and returns the parsed GDEF table.

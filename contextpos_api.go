@@ -5,8 +5,8 @@
 package fonttools
 
 import (
-	"github.com/kamiwanai/fonttools/gpos"
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/gpos"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 func ExtractGPOSContextPos(path string) ([]gpos.ContextPosLookup, error) {

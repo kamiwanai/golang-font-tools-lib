@@ -5,8 +5,8 @@
 package fonttools
 
 import (
-	"github.com/kamiwanai/fonttools/avar"
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/avar"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 // ExtractAVAR reads a font file and returns the parsed avar (Axis Variations) table.

@@ -5,8 +5,8 @@
 package fonttools
 
 import (
-	"github.com/kamiwanai/fonttools/gvar"
-	"github.com/kamiwanai/fonttools/opentype"
+	"github.com/kamiwanai/golang-font-tools-lib/gvar"
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 // ExtractGVAR reads a font file and returns the parsed gvar (Glyph Variations) table.

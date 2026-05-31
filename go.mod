@@ -1,4 +1,4 @@
-module github.com/kamiwanai/fonttools
+module github.com/kamiwanai/golang-font-tools-lib
 
 go 1.22.0
 
