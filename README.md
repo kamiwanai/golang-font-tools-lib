@@ -1,3 +1,5 @@
+![golang fonttools](golang%20fonttools.png)
+
 # fonttools
 
 Go library for reading OpenType font data. Not a port of Python fontTools —
