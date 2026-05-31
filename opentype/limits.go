@@ -15,3 +15,10 @@ var MaxPostCustomNames int = 65536
 
 // MaxNameRecords limits the number of name records read from the name table.
 var MaxNameRecords int = 65536
+
+// MaxCollectionFonts limits the number of fonts parsed from a TrueType/OpenType
+// Collection (.ttc/.otc). Collections exceeding this limit are rejected.
+var MaxCollectionFonts int = 8192
+
+// MaxCFF2FDRanges limits the number of ranges in a CFF2 FDSelect format 3/4.
+var MaxCFF2FDRanges int = 65536

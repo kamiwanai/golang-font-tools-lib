@@ -194,16 +194,32 @@ func (font *Font) GlyphOrder() ([]string, error) {
 
 	post, err := font.TableData("post")
 	if err != nil {
+		// No post table: try CFF glyph names for .otf fonts.
+		if cffNames, cffErr := font.CFFGlyphNames(); cffErr == nil {
+			if len(cffNames) == numGlyphs {
+				return cffNames, nil
+			}
+		}
+		// Try CFF2 for variable .otf fonts.
+		if cff2Names, cff2Err := font.CFF2GlyphNames(); cff2Err == nil {
+			if len(cff2Names) == numGlyphs {
+				return cff2Names, nil
+			}
+		}
 		return fallback(), nil
 	}
 	if len(post) < 32 {
 		return nil, fmt.Errorf("post table too short: %d bytes", len(post))
 	}
 	format := readU32(post, 0)
-	if format == 0x00030000 {
-		return fallback(), nil
-	}
-	if format != 0x00020000 {
+	// When post format doesn't provide names (format 3 or unsupported),
+	// try CFF glyph names for .otf fonts with CFF outlines.
+	if format == 0x00030000 || format != 0x00020000 {
+		if cffNames, err := font.CFFGlyphNames(); err == nil {
+			if len(cffNames) == numGlyphs {
+				return cffNames, nil
+			}
+		}
 		return fallback(), nil
 	}
 	if len(post) < 34 {
@@ -240,6 +256,23 @@ func (font *Font) GlyphOrder() ([]string, error) {
 		}
 	}
 	return glyphs, nil
+}
+
+// ReverseCmap returns the reverse Unicode cmap as glyph ID to codepoints.
+//
+// It reads the best forward cmap and inverts it: each glyph ID maps to all
+// codepoints that map to it. Glyph 0 (.notdef) is included only if the font's
+// cmap explicitly maps codepoints to it.
+func (font *Font) ReverseCmap() (map[uint16][]uint32, error) {
+	forward, err := font.BestCmap()
+	if err != nil {
+		return nil, err
+	}
+	reverse := make(map[uint16][]uint32)
+	for codepoint, glyphID := range forward {
+		reverse[glyphID] = append(reverse[glyphID], codepoint)
+	}
+	return reverse, nil
 }
 
 // BestCmap returns the best supported Unicode cmap as codepoint to glyph ID.
@@ -465,4 +498,73 @@ var macGlyphNames = []string{
 	"Scaron", "scaron", "Zcaron", "zcaron", "brokenbar", "Eth", "eth", "Yacute", "yacute", "Thorn", "thorn", "minus",
 	"multiply", "onesuperior", "twosuperior", "threesuperior", "onehalf", "onequarter", "threequarters", "franc", "Gbreve", "gbreve",
 	"Idotaccent", "Scedilla", "scedilla", "Cacute", "cacute", "Ccaron", "ccaron", "dcroat",
+}
+
+// Collection is a parsed TrueType/OpenType Collection (.ttc / .otc).
+type Collection struct {
+	// Fonts holds the parsed fonts in the collection.
+	Fonts []*Font
+}
+
+// ParseCollection parses a TrueType/OpenType Collection from bytes.
+//
+// It reads the TTC header and parses each font within the collection.
+// The tag must be "ttcf". Version 1 and 2 TTC headers are supported.
+func ParseCollection(data []byte) (*Collection, error) {
+	if len(data) < 12 {
+		return nil, fmt.Errorf("TTC header too short: %d bytes", len(data))
+	}
+	tag := string(data[0:4])
+	if tag != "ttcf" {
+		return nil, fmt.Errorf("not a TTC: tag %q, want \"ttcf\"", tag)
+	}
+	version := readU16(data, 4)
+	if version != 1 && version != 2 {
+		return nil, fmt.Errorf("TTC version %d not supported", version)
+	}
+	numFonts := int(readU32(data, 8))
+	if numFonts > MaxCollectionFonts {
+		return nil, fmt.Errorf("TTC has %d fonts, exceeds limit %d", numFonts, MaxCollectionFonts)
+	}
+	// Offset table starts at offset 12; each entry is 4 bytes.
+	offsetTableStart := 12
+	// Version 2 has 12 bytes of DSIG info after the offset table.
+	offsetTableEnd := offsetTableStart + numFonts*4
+	if version == 2 {
+		offsetTableEnd += 12
+	}
+	if offsetTableEnd > len(data) {
+		return nil, fmt.Errorf("TTC offset table exceeds data: need %d bytes, got %d", offsetTableEnd, len(data))
+	}
+
+	fonts := make([]*Font, 0, numFonts)
+	for i := 0; i < numFonts; i++ {
+		fontOffset := int(readU32(data, offsetTableStart+i*4))
+		if fontOffset >= len(data) {
+			return nil, fmt.Errorf("TTC font %d offset %d exceeds data", i, fontOffset)
+		}
+		font, err := Parse(data[fontOffset:])
+		if err != nil {
+			return nil, fmt.Errorf("TTC font %d: %w", i, err)
+		}
+		// The parsed font's data slice shares the underlying collection data.
+		// Adjust offsets to be relative to the start of the collection data.
+		for tag, table := range font.Tables {
+			table.Offset += uint32(fontOffset)
+			font.Tables[tag] = table
+		}
+		// Re-point font.data to the full collection data so TableData works.
+		font.data = data
+		fonts = append(fonts, font)
+	}
+	return &Collection{Fonts: fonts}, nil
+}
+
+// ParseCollectionFile reads and parses a TrueType/OpenType Collection from path.
+func ParseCollectionFile(path string) (*Collection, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCollection(data)
 }

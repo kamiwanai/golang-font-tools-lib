@@ -14,3 +14,11 @@ var MaxClassPairExpansion int = 10_000_000
 
 // MaxLookupCount limits the number of lookups processed in GPOS.
 var MaxLookupCount int = 65536
+
+
+// MaxMarkCount limits the number of mark records in a MarkArray.
+var MaxMarkCount int = 65536
+
+// MaxMarkAttachments limits the total number of mark attachments produced
+// from all mark lookup subtables.
+var MaxMarkAttachments int = 10_000_000
