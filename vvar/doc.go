@@ -1,3 +1,7 @@
+// Copyright (c) 2026 kamiwanai. All rights reserved.
+// Licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
+// See LICENSE for details. Commercial licensing: inari1337@gmail.com
+
 // Package vvar decodes the OpenType VVAR (Vertical Metrics Variations) table.
 //
 // The VVAR table provides variation data for vertical metrics (advance heights,

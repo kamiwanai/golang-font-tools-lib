@@ -119,7 +119,7 @@ func main() {
 	// Variable font axes
 	fv, _ := fonttools.ExtractFVAR("Variable.ttf")
 	for _, ax := range fv.Axes {
-		fmt.Printf("%s: %v–%v (default %v)\n", ax.Tag, ax.MinValue, ax.MaxValue, ax.DefaultValue)
+		fmt.Printf("%s: %v-%v (default %v)\n", ax.Tag, ax.MinValue, ax.MaxValue, ax.DefaultValue)
 	}
 }
 ```
@@ -179,4 +179,35 @@ Prints all GPOS kerning pairs to stdout.
 
 ## License
 
-AGPL-3.0 — see [LICENSE](LICENSE).
+**AGPL-3.0** — see [LICENSE](LICENSE).
+
+This means: you can use, modify, and distribute this library freely, but if you
+incorporate it into a network-accessible service or a larger work, the entire
+derivative work must be released under AGPL-3.0 with full source code.
+
+### Commercial license
+
+If AGPL-3.0 obligations do not fit your use case (closed-source product, SaaS
+backend, embedded firmware, etc.), a commercial license is available.
+
+| Scope | Price | What you get |
+|-------|-------|-------------|
+| Single product / company | Contact for pricing | Proprietary license, no source disclosure obligation, 1 year of updates |
+| OEM / redistribution | Contact for pricing | Sublicensing rights, custom terms |
+
+Contact: **inari1337@gmail.com**
+
+### Enforcement
+
+- Every source file carries a copyright header with license reference.
+- This repository is monitored for unlicensed use via automated code scanning.
+- Unauthorized use in a closed-source or network-accessible product without a
+  commercial license will be pursued. First step is a cease-and-desist; if
+  unresolved, formal legal action under AGPL-3.0 terms.
+- Estimated damages basis: commercial license price × years of unlicensed use.
+
+### Contributing
+
+By submitting a pull request you agree to the terms in [CONTRIBUTING.md](CONTRIBUTING.md),
+including the Contributor License Agreement (CLA) that grants the copyright holder
+the right to relicense your contribution.

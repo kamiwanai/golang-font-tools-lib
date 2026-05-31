@@ -1,3 +1,7 @@
+// Copyright (c) 2026 kamiwanai. All rights reserved.
+// Licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
+// See LICENSE for details. Commercial licensing: inari1337@gmail.com
+
 // Package mvar decodes the OpenType MVAR (Metrics Variations) table.
 //
 // The MVAR table provides variation data for font-wide metrics in variable
