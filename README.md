@@ -27,34 +27,34 @@ Requires Go 1.22+. Runtime depends only on the Go standard library; tests use
 | **Glyph bboxes** | TrueType glyf bbox | `font.GlyphBBoxes()` |
 | **CFF bboxes** | CFF/CFF2 CharString bbox (Type 2 interpreter) | `font.CFFGlyphBBoxes()` / `font.CFF2GlyphBBoxes()` |
 | **Advance widths** | Per-glyph advance widths | `font.AdvanceWidths()` |
-| **Kerning (GPOS)** | PairPos pairs (fmt 1/2, extension type 9) | `fonttools.ExtractGPOSKerning(path)` |
+| **Kerning (GPOS)** | PairPos pairs (fmt 1/2, extension type 9) | `font.GPOSKerning()` |
 | **Kerning (legacy)** | `kern` table format 0 | `font.Kern()` |
-| **Single pos (GPOS)** | SinglePos lookup type 1 (fmt 1/2) | `fonttools.ExtractGPOSSinglePos(path)` |
-| **Mark attachments** | MarkBase/MarkLig/MarkMark (types 4/5/6) | `fonttools.ExtractGPOSMarkAttachments(path)` |
-| **Cursive pos (GPOS)** | Entry/exit anchors (type 3) | `fonttools.ExtractGPOSCursivePos(path)` |
-| **Context pos (GPOS)** | ContextPos + ChainContextPos (types 7/8) | `fonttools.ExtractGPOSContextPos(path)` |
-| **GSUB single subst** | Glyph→glyph substitution (type 1) | `fonttools.ExtractGSUBSingleSubst(path)` |
-| **GSUB ligatures** | Ligature substitution (type 4) | `fonttools.ExtractGSUBLigatureSubst(path)` |
-| **GSUB multiple subst** | One→many substitution (type 2) | `fonttools.ExtractGSUBMultipleSubst(path)` |
-| **GSUB alternate subst** | One→pick-one substitution (type 3) | `fonttools.ExtractGSUBAlternateSubst(path)` |
-| **GSUB context subst** | Context + ChainContext (types 5/6) | `fonttools.ExtractGSUBContextSubst(path)` / `ChainContext` |
-| **GSUB reverse subst** | Reverse chaining (type 8) | `fonttools.ExtractGSUBReverseChain(path)` |
-| **Feature mapping** | GPOS/GSUB Script→Lang→Feature→Lookups | `gsub.ActiveLookups(data, script, lang, feature)` |
-| **GDEF** | GlyphClassDef, MarkAttachClass, AttachList, LigCaretList | `fonttools.ExtractGDEF(path)` |
-| **fvar** | Variation axes + named instances | `fonttools.ExtractFVAR(path)` |
-| **gvar** | Glyph variations (tuple headers + packed deltas) | `fonttools.ExtractGVAR(path)` |
-| **avar** | Axis variations normalization map | `fonttools.ExtractAVAR(path)` |
-| **STAT** | Style attributes (design axes + axis values) | `fonttools.ExtractSTAT(path)` |
-| **MVAR** | Metrics variations (delta records) | `fonttools.ExtractMVAR(path)` |
-| **HVAR** | Horizontal metrics variations (ItemVariationStore + DeltaSetIndexMap) | `fonttools.ExtractHVAR(path)` |
-| **VVAR** | Vertical metrics variations | `fonttools.ExtractVVAR(path)` |
+| **Single pos (GPOS)** | SinglePos lookup type 1 (fmt 1/2) | `font.GPOSSinglePos()` |
+| **Mark attachments** | MarkBase/MarkLig/MarkMark (types 4/5/6) | `font.GPOSMarkAttachments()` |
+| **Cursive pos (GPOS)** | Entry/exit anchors (type 3) | `font.GPOSCursivePos()` |
+| **Context pos (GPOS)** | ContextPos + ChainContextPos (types 7/8) | `font.GPOSContextPos()` / `font.GPOSChainContextPos()` |
+| **GSUB single subst** | Glyph→glyph substitution (type 1) | `font.GSUBSingleSubst()` |
+| **GSUB ligatures** | Ligature substitution (type 4) | `font.GSUBLigatureSubst()` |
+| **GSUB multiple subst** | One→many substitution (type 2) | `font.GSUBMultipleSubst()` |
+| **GSUB alternate subst** | One→pick-one substitution (type 3) | `font.GSUBAlternateSubst()` |
+| **GSUB context subst** | Context + ChainContext (types 5/6) | `font.GSUBContextSubst()` / `font.GSUBChainContextSubst()` |
+| **GSUB reverse subst** | Reverse chaining (type 8) | `font.GSUBReverseSubst()` |
+| **Feature mapping** | GPOS/GSUB Script→Lang→Feature→Lookups | `font.GSUBActiveLookups(script, lang, feature)` |
+| **GDEF** | GlyphClassDef, MarkAttachClass, AttachList, LigCaretList | `font.GDEFTable()` |
+| **fvar** | Variation axes + named instances | `font.FVARTable()` / `font.FVARAxes()` / `font.FVARInstances()` |
+| **gvar** | Glyph variations (tuple headers + packed deltas) | `font.GVARTable()` |
+| **avar** | Axis variations normalization map | `font.AVARTable()` |
+| **STAT** | Style attributes (design axes + axis values) | `font.STATTable()` |
+| **MVAR** | Metrics variations (delta records) | `font.MVARTable()` |
+| **HVAR** | Horizontal metrics variations (ItemVariationStore + DeltaSetIndexMap) | `font.HVARTable()` |
+| **VVAR** | Vertical metrics variations | `font.VVARTable()` |
 | **Font headers** | head, hhea, hmtx, OS/2, post | `font.Head()` / `Hhea()` / `Hmtx()` / `OS2()` / `Post()` |
 | **Name records** | name table (all nameIDs, multi-language) | `font.NameRecords()` / `font.Name(ids...)` |
 | **Font collections** | .ttc/.otc multi-font containers | `opentype.ParseCollection(data)` |
 
-Top-level `Extract*` functions parse the file and return data. For multiple
-extractions, `opentype.ParseFile(path)` once, then call the equivalent
-`(f *Font).Method()` on the parsed font to avoid re-parsing.
+Use `fonttools.ParseFile(path)` once, then call methods on the returned `*fonttools.Font`.
+For quick one-liners, `Extract*` convenience functions (e.g. `ExtractGPOSKerning(path)`)
+still exist — they parse internally and delegate to the same methods.
 
 ---
 
@@ -62,7 +62,7 @@ extractions, `opentype.ParseFile(path)` once, then call the equivalent
 
 | Package | Purpose |
 |---------|---------|
-| `fonttools` (root) | High-level `Extract*` convenience API |
+| `fonttools` (root) | High-level `Font` type with typed extractor methods; `Extract*` one-liners |
 | `opentype` | Low-level sfnt parser, table readers, Font type |
 | `gpos` | GPOS table decoding (PairPos, SinglePos, MarkPos, CursivePos, ContextPos, features) |
 | `gsub` | GSUB table decoding (Single, Ligature, Multiple, Alternate, Context, Reverse, features) |
@@ -81,6 +81,9 @@ extractions, `opentype.ParseFile(path)` once, then call the equivalent
 
 ## Example
 
+The recommended approach: parse once with `fonttools.ParseFile()`, then call any number of
+extractor methods on the returned `*fonttools.Font`. This avoids repeated file I/O.
+
 ```go
 package main
 
@@ -90,47 +93,54 @@ import (
 
 	"github.com/kamiwanai/golang-font-tools-lib"
 	"github.com/kamiwanai/golang-font-tools-lib/gsub"
-	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 func main() {
-	// Kerning pairs
-	pairs, err := fonttools.ExtractGPOSKerning("Font.ttf")
+	font, err := fonttools.ParseFile("Font.ttf")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Kerning pairs (GPOS PairPos)
+	pairs, err := font.GPOSKerning()
 	if err != nil {
 		log.Fatal(err)
 	}
 	for _, p := range pairs {
-		fmt.Printf("%s %s %d\n", p.LeftGlyph, p.RightGlyph, p.Value)
+		fmt.Printf("%s %s %d
+", p.LeftGlyph, p.RightGlyph, p.Value)
 	}
 
-	// Mark attachments (diacritics)
-	marks, _ := fonttools.ExtractGPOSMarkAttachments("Font.ttf")
+	// Mark attachments (GPOS MarkBasePos / MarkLigPos / MarkMarkPos)
+	marks, _ := font.GPOSMarkAttachments()
 	for _, m := range marks {
-		fmt.Printf("%s on %s: (%d,%d)\n", m.MarkGlyph, m.BaseGlyph, m.BaseAnchor.X, m.BaseAnchor.Y)
+		fmt.Printf("%s on %s: (%d,%d)
+", m.MarkGlyph, m.BaseGlyph, m.BaseAnchor.X, m.BaseAnchor.Y)
 	}
 
 	// GSUB ligatures, filtered by feature
-	font, _ := opentype.ParseFile("Font.ttf")
-	gsubData, _ := font.GSUB()
-	glyphOrder, _ := font.GlyphOrder()
+	lookups, _ := font.GSUBActiveLookups("latn", "dflt", "liga")
+	fmt.Printf("liga lookups: %v
+", lookups)
 
-	lookups, _ := gsub.ActiveLookups(gsubData, "latn", "dflt", "liga")
-	fmt.Printf("liga lookups: %v\n", lookups)
-
-	ligs, _ := gsub.DecodeLigatureSubstLookups(gsubData, glyphOrder)
+	ligs, _ := font.GSUBLigatureSubst()
 	for _, l := range ligs {
-		fmt.Printf("%s -> %v\n", l.Ligature, l.Components)
+		fmt.Printf("%s -> %v
+", l.Ligature, l.Components)
 	}
 
 	// Variable font axes
-	fv, _ := fonttools.ExtractFVAR("Variable.ttf")
-	for _, ax := range fv.Axes {
-		fmt.Printf("%s: %v-%v (default %v)\n", ax.Tag, ax.MinValue, ax.MaxValue, ax.DefaultValue)
+	axes, _ := font.FVARAxes()
+	for _, ax := range axes {
+		fmt.Printf("%s: %v-%v (default %v)
+", ax.Tag, ax.MinValue, ax.MaxValue, ax.DefaultValue)
 	}
 }
 ```
 
----
+One-liner convenience functions (`ExtractGPOSKerning`, `ExtractGDEF`, etc.) still exist
+for quick single-extraction scripts — they parse the file internally and delegate to the
+same methods. New code should prefer `ParseFile` + methods for multi-extraction efficiency.
 
 ## Supported formats
 

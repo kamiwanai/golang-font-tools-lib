@@ -75,7 +75,7 @@ func (f *Font) GPOSCursivePos() ([]gpos.CursiveEntry, error) {
 	}
 	gposData, err := f.GPOS()
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 	return gpos.DecodeCursivePosLookups(gposData, glyphOrder)
 }
@@ -98,7 +98,7 @@ func (f *Font) GPOSContextPos() ([]gpos.ContextPosLookup, error) {
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	gposData, err := f.GPOS()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gpos.DecodeContextPosLookups(gposData, glyphOrder)
 }
 
@@ -107,7 +107,7 @@ func (f *Font) GPOSChainContextPos() ([]gpos.ContextPosLookup, error) {
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	gposData, err := f.GPOS()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gpos.DecodeChainContextPosLookups(gposData, glyphOrder)
 }
 
@@ -116,7 +116,7 @@ func (f *Font) GPOSContextValueRecords() ([]gpos.ContextValueRecord, error) {
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	gposData, err := f.GPOS()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gpos.DecodeContextValueRecords(gposData, glyphOrder, 7)
 }
 
@@ -125,7 +125,7 @@ func (f *Font) GPOSChainContextValueRecords() ([]gpos.ContextValueRecord, error)
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	gposData, err := f.GPOS()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gpos.DecodeContextValueRecords(gposData, glyphOrder, 8)
 }
 
@@ -136,7 +136,7 @@ func (f *Font) GSUBSingleSubst() ([]gsub.SingleSubst, error) {
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	gsubData, err := f.GSUB()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gsub.DecodeSingleSubstLookups(gsubData, glyphOrder)
 }
 
@@ -145,7 +145,7 @@ func (f *Font) GSUBLigatureSubst() ([]gsub.LigatureSubst, error) {
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	gsubData, err := f.GSUB()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gsub.DecodeLigatureSubstLookups(gsubData, glyphOrder)
 }
 
@@ -154,7 +154,7 @@ func (f *Font) GSUBMultipleSubst() ([]gsub.MultipleSubst, error) {
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	gsubData, err := f.GSUB()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gsub.DecodeMultipleSubstLookups(gsubData, glyphOrder)
 }
 
@@ -163,35 +163,35 @@ func (f *Font) GSUBAlternateSubst() ([]gsub.AlternateSubst, error) {
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	gsubData, err := f.GSUB()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gsub.DecodeAlternateSubstLookups(gsubData, glyphOrder)
 }
 
 // GSUBScripts returns the script list from the GSUB table.
 func (f *Font) GSUBScripts() ([]gsub.Script, error) {
 	gsubData, err := f.GSUB()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gsub.Scripts(gsubData)
 }
 
 // GSUBFeatures returns the feature list from the GSUB table.
 func (f *Font) GSUBFeatures() ([]gsub.Feature, error) {
 	gsubData, err := f.GSUB()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gsub.Features(gsubData)
 }
 
 // GSUBActiveLookups returns lookup indices for a script/language/feature combination.
 func (f *Font) GSUBActiveLookups(scriptTag, langTag, featureTag string) ([]uint16, error) {
 	gsubData, err := f.GSUB()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gsub.ActiveLookups(gsubData, scriptTag, langTag, featureTag)
 }
 
 // GSUBContextSubst returns ContextSubst (type 5) lookups.
 func (f *Font) GSUBContextSubst() ([]gsub.ContextSubstLookup, error) {
 	gsubData, err := f.GSUB()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	return gsub.DecodeContextSubstLookups(gsubData, glyphOrder)
@@ -200,7 +200,7 @@ func (f *Font) GSUBContextSubst() ([]gsub.ContextSubstLookup, error) {
 // GSUBChainContextSubst returns ChainContextSubst (type 6) lookups.
 func (f *Font) GSUBChainContextSubst() ([]gsub.ContextSubstLookup, error) {
 	gsubData, err := f.GSUB()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	return gsub.DecodeChainContextSubstLookups(gsubData, glyphOrder)
@@ -211,7 +211,7 @@ func (f *Font) GSUBReverseSubst() ([]gsub.ReverseSubst, error) {
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	gsubData, err := f.GSUB()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	return gsub.DecodeReverseSubstLookups(gsubData, glyphOrder)
 }
 
@@ -229,7 +229,7 @@ func (f *Font) GDEFTable() (gdef.GDEF, error) {
 // GDEFGlyphClasses returns glyph ID to GDEF class mapping (1=Base, 2=Ligature, 3=Mark, 4=Component).
 func (f *Font) GDEFGlyphClasses() (map[uint16]uint16, error) {
 	gdefData, err := f.GDEF()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	gd, err := gdef.Decode(gdefData, glyphOrder)
@@ -240,7 +240,7 @@ func (f *Font) GDEFGlyphClasses() (map[uint16]uint16, error) {
 // GDEFGlyphClassesByName returns glyph name to GDEF class mapping.
 func (f *Font) GDEFGlyphClassesByName() (map[string]uint16, error) {
 	gdefData, err := f.GDEF()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	glyphOrder, err := f.GlyphOrder()
 	if err != nil { return nil, err }
 	gd, err := gdef.Decode(gdefData, glyphOrder)
@@ -260,7 +260,7 @@ func (f *Font) FVARTable() (fvar.FVAR, error) {
 // FVARAxes returns the variation axes from the fvar table.
 func (f *Font) FVARAxes() ([]fvar.Axis, error) {
 	fvarData, err := f.FVAR()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	fv, err := fvar.Decode(fvarData)
 	if err != nil { return nil, err }
 	return fv.Axes, nil
@@ -269,7 +269,7 @@ func (f *Font) FVARAxes() ([]fvar.Axis, error) {
 // FVARInstances returns the named instances from the fvar table.
 func (f *Font) FVARInstances() ([]fvar.Instance, error) {
 	fvarData, err := f.FVAR()
-	if err != nil { return nil, nil }
+	if err != nil { return nil, err }
 	fv, err := fvar.Decode(fvarData)
 	if err != nil { return nil, err }
 	return fv.Instances, nil
