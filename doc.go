@@ -2,9 +2,16 @@
 // Licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
 // See LICENSE for details. Commercial licensing: inari1337@gmail.com
 
-// Package fonttools provides convenience helpers for OpenType inspection.
+// Package fonttools provides a high-level API for OpenType font inspection.
 //
-// The package currently focuses on extracting GPOS PairPos kerning from font
-// files. Use the subpackages for lower-level OpenType table access and direct
-// GPOS decoding.
+// The Font type wraps a parsed OpenType font and exposes typed table
+// extractors as methods. Parse once, then call any number of extractors
+// without repeated file I/O:
+//
+//	font, _ := fonttools.ParseFile("FiraCode-Regular.ttf")
+//	kerning, _ := font.GPOSKerning()
+//	axes, _ := font.FVARAxes()
+//
+// Lower-level table access is available through the subpackages (opentype,
+// gpos, gsub, fvar, etc.).
 package fonttools

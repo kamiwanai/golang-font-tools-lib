@@ -18,7 +18,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	pairs, err := fonttools.ExtractGPOSKerning(os.Args[1])
+	// Parse once — all extractions reuse the same in-memory data.
+	font, err := fonttools.ParseFile(os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pairs, err := font.GPOSKerning()
 	if err != nil {
 		log.Fatal(err)
 	}
