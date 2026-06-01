@@ -11,7 +11,8 @@ narrow scope: parse tables, extract structured data, return Go types.
 go get github.com/kamiwanai/golang-font-tools-lib
 ```
 
-Requires Go 1.22+. Depends only on `golang.org/x/image`.
+Requires Go 1.22+. Runtime depends only on the Go standard library; tests use
+`golang.org/x/image/font/gofont` for fixtures.
 
 ---
 
@@ -51,8 +52,9 @@ Requires Go 1.22+. Depends only on `golang.org/x/image`.
 | **Name records** | name table (all nameIDs, multi-language) | `font.NameRecords()` / `font.Name(ids...)` |
 | **Font collections** | .ttc/.otc multi-font containers | `opentype.ParseCollection(data)` |
 
-Every `Extract*` function has a `*FromFont` variant that takes an already-parsed `*opentype.Font`
-to avoid re-parsing when you need multiple extractions.
+Top-level `Extract*` functions parse the file and return data. For multiple
+extractions, `opentype.ParseFile(path)` once, then call the equivalent
+`(f *Font).Method()` on the parsed font to avoid re-parsing.
 
 ---
 
@@ -72,6 +74,8 @@ to avoid re-parsing when you need multiple extractions.
 | `mvar` | MVAR table: metrics variations |
 | `hvar` | HVAR table: horizontal metrics variations |
 | `vvar` | VVAR table: vertical metrics variations |
+| `internal/otfeatures` | Shared OpenType script/lang/feature-list decoder (used by `gpos` + `gsub`) |
+| `internal/variation` | Shared ItemVariationStore / DeltaSetIndexMap / F2DOT14 decoder (used by `hvar` + `vvar` + `mvar`) |
 
 ---
 
