@@ -46,7 +46,7 @@ func (f *Font) GPOSKerning() ([]gpos.PairValue, error) {
 	if err != nil {
 		return nil, err
 	}
-	gposData, err := f.TableData("GPOS")
+	gposData, err := f.GPOS()
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (f *Font) GPOSSinglePos() ([]gpos.SinglePosValue, error) {
 	if err != nil {
 		return nil, err
 	}
-	gposData, err := f.TableData("GPOS")
+	gposData, err := f.GPOS()
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func (f *Font) GPOSMarkAttachments() ([]gpos.MarkAttachment, error) {
 	if err != nil {
 		return nil, err
 	}
-	gposData, err := f.TableData("GPOS")
+	gposData, err := f.GPOS()
 	if err != nil {
 		return nil, err
 	}

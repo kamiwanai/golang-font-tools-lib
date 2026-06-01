@@ -12,15 +12,15 @@ func TestScriptsParsesFromGSUB(t *testing.T) {
 	data := buildGSUBFeatures(
 		[]gsubScriptDef{
 			{
-				tag:            "latn",
-				defaultLangSys: &gsubLangSysDef{featureIndices: []uint16{0}},
-				langs: []gsubLangSysRecordDef{
-					{tag: "ENG ", langSys: gsubLangSysDef{featureIndices: []uint16{0, 1}}},
+				Tag:            "latn",
+				DefaultLangSys: &gsubLangSysDef{FeatureIndices: []uint16{0}},
+				Langs: []gsubLangSysRecordDef{
+					{Tag: "ENG ", LangSys: gsubLangSysDef{FeatureIndices: []uint16{0, 1}}},
 				},
 			},
 		},
 		[]gsubFeatureDef{
-			{tag: "liga", lookupIndices: []uint16{0, 1}},
+			{Tag: "liga", LookupIndices: []uint16{0, 1}},
 		},
 	)
 	scripts, err := Scripts(data)
@@ -53,10 +53,10 @@ func TestScriptsParsesFromGSUB(t *testing.T) {
 func TestScriptsDefaultOnlyGSUB(t *testing.T) {
 	data := buildGSUBFeatures(
 		[]gsubScriptDef{
-			{tag: "latn", defaultLangSys: &gsubLangSysDef{featureIndices: []uint16{0}}},
+			{Tag: "latn", DefaultLangSys: &gsubLangSysDef{FeatureIndices: []uint16{0}}},
 		},
 		[]gsubFeatureDef{
-			{tag: "liga", lookupIndices: []uint16{0, 1}},
+			{Tag: "liga", LookupIndices: []uint16{0, 1}},
 		},
 	)
 	scripts, err := Scripts(data)
@@ -74,10 +74,10 @@ func TestScriptsDefaultOnlyGSUB(t *testing.T) {
 func TestFeaturesParsesFromGSUB(t *testing.T) {
 	data := buildGSUBFeatures(
 		[]gsubScriptDef{
-			{tag: "latn", defaultLangSys: &gsubLangSysDef{featureIndices: []uint16{0}}},
+			{Tag: "latn", DefaultLangSys: &gsubLangSysDef{FeatureIndices: []uint16{0}}},
 		},
 		[]gsubFeatureDef{
-			{tag: "liga", lookupIndices: []uint16{0, 1}},
+			{Tag: "liga", LookupIndices: []uint16{0, 1}},
 		},
 	)
 	features, err := Features(data)
@@ -98,10 +98,10 @@ func TestFeaturesParsesFromGSUB(t *testing.T) {
 func TestActiveLookupsForLigaFeature(t *testing.T) {
 	data := buildGSUBFeatures(
 		[]gsubScriptDef{
-			{tag: "latn", defaultLangSys: &gsubLangSysDef{featureIndices: []uint16{0}}},
+			{Tag: "latn", DefaultLangSys: &gsubLangSysDef{FeatureIndices: []uint16{0}}},
 		},
 		[]gsubFeatureDef{
-			{tag: "liga", lookupIndices: []uint16{0, 1}},
+			{Tag: "liga", LookupIndices: []uint16{0, 1}},
 		},
 	)
 	lookups, err := ActiveLookups(data, "latn", "dflt", "liga")
@@ -119,10 +119,10 @@ func TestActiveLookupsForLigaFeature(t *testing.T) {
 func TestActiveLookupsNoMatchGSUB(t *testing.T) {
 	data := buildGSUBFeatures(
 		[]gsubScriptDef{
-			{tag: "latn", defaultLangSys: &gsubLangSysDef{featureIndices: []uint16{0}}},
+			{Tag: "latn", DefaultLangSys: &gsubLangSysDef{FeatureIndices: []uint16{0}}},
 		},
 		[]gsubFeatureDef{
-			{tag: "liga", lookupIndices: []uint16{0}},
+			{Tag: "liga", LookupIndices: []uint16{0}},
 		},
 	)
 	lookups, err := ActiveLookups(data, "arab", "", "liga")
@@ -138,12 +138,12 @@ func TestActiveLookupsWithReqFeatureGSUB(t *testing.T) {
 	data := buildGSUBFeatures(
 		[]gsubScriptDef{
 			{
-				tag:            "latn",
-				defaultLangSys: &gsubLangSysDef{reqFeatureIndex: 0, featureIndices: []uint16{0}},
+				Tag:            "latn",
+				DefaultLangSys: &gsubLangSysDef{ReqFeatureIndex: 0, FeatureIndices: []uint16{0}},
 			},
 		},
 		[]gsubFeatureDef{
-			{tag: "liga", lookupIndices: []uint16{5}},
+			{Tag: "liga", LookupIndices: []uint16{5}},
 		},
 	)
 	lookups, err := ActiveLookups(data, "latn", "dflt", "liga")

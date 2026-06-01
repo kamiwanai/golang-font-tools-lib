@@ -5,10 +5,9 @@
 package mvar
 
 import (
-	"encoding/binary"
 	"fmt"
 
-	"github.com/kamiwanai/golang-font-tools-lib/hvar"
+	"github.com/kamiwanai/golang-font-tools-lib/internal/variation"
 )
 
 // ---------- Value Tag Constants ----------
@@ -55,14 +54,15 @@ const (
 	TagGsp9 = "gsp9" // GaspRange[9]
 )
 
-// ---------- Types ----------
+// MaxValueRecords limits the number of value records in the MVAR table.
+var MaxValueRecords int = 256
 
 // ValueRecord identifies a font-wide metric and its delta-set index
 // within the ItemVariationStore.
 type ValueRecord struct {
-	ValueTag      string // 4-byte tag (e.g., "hasc", "hdsc")
-	DeltaSetOuter uint16 // Outer index into ItemVariationData subtable
-	DeltaSetInner uint16 // Inner index into delta-set row
+	ValueTag      string
+	DeltaSetOuter uint16
+	DeltaSetInner uint16
 }
 
 // MVAR holds the parsed MVAR (Metrics Variations) table.
@@ -70,20 +70,12 @@ type MVAR struct {
 	MajorVersion       uint16
 	MinorVersion       uint16
 	ValueRecords       []ValueRecord
-	ItemVariationStore hvar.ItemVariationStore
-}
-
-// ---------- Helpers ----------
-
-func readU16(data []byte, offset int) uint16 {
-	return binary.BigEndian.Uint16(data[offset : offset+2])
+	ItemVariationStore variation.ItemVariationStore
 }
 
 func readTag(data []byte, offset int) string {
 	return string(data[offset : offset+4])
 }
-
-// ---------- Decode ----------
 
 // Decode parses an MVAR table from raw bytes.
 func Decode(data []byte) (MVAR, error) {
@@ -91,12 +83,11 @@ func Decode(data []byte) (MVAR, error) {
 		return MVAR{}, fmt.Errorf("MVAR header too short: %d bytes", len(data))
 	}
 
-	majorVersion := readU16(data, 0)
-	minorVersion := readU16(data, 2)
-	// offset 4-5: reserved
-	valueRecordSize := readU16(data, 6)
-	valueRecordCount := readU16(data, 8)
-	itemVarStoreOffset := readU16(data, 10)
+	majorVersion := variation.ReadU16(data, 0)
+	minorVersion := variation.ReadU16(data, 2)
+	valueRecordSize := variation.ReadU16(data, 6)
+	valueRecordCount := variation.ReadU16(data, 8)
+	itemVarStoreOffset := variation.ReadU16(data, 10)
 
 	if majorVersion != 1 {
 		return MVAR{}, fmt.Errorf("MVAR unsupported major version %d", majorVersion)
@@ -106,7 +97,6 @@ func Decode(data []byte) (MVAR, error) {
 		return MVAR{}, fmt.Errorf("MVAR valueRecordCount %d exceeds limit %d", valueRecordCount, MaxValueRecords)
 	}
 
-	// Parse value records
 	recordsStart := 12
 	recordsEnd := recordsStart + int(valueRecordCount)*int(valueRecordSize)
 	if recordsEnd > len(data) {
@@ -121,20 +111,19 @@ func Decode(data []byte) (MVAR, error) {
 		}
 		records[i] = ValueRecord{
 			ValueTag:      readTag(data, pos),
-			DeltaSetOuter: readU16(data, pos+4),
-			DeltaSetInner: readU16(data, pos+6),
+			DeltaSetOuter: variation.ReadU16(data, pos+4),
+			DeltaSetInner: variation.ReadU16(data, pos+6),
 		}
 	}
 
-	// Parse ItemVariationStore
 	if valueRecordCount > 0 && itemVarStoreOffset == 0 {
 		return MVAR{}, fmt.Errorf("MVAR has %d value records but ItemVariationStore offset is 0", valueRecordCount)
 	}
 
-	var ivs hvar.ItemVariationStore
+	var ivs variation.ItemVariationStore
 	if itemVarStoreOffset != 0 {
 		var err error
-		ivs, err = hvar.DecodeItemVariationStore(data, int(itemVarStoreOffset))
+		ivs, err = variation.DecodeItemVariationStore(data, int(itemVarStoreOffset))
 		if err != nil {
 			return MVAR{}, fmt.Errorf("MVAR ItemVariationStore: %w", err)
 		}

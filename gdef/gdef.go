@@ -7,6 +7,8 @@ package gdef
 import (
 	"encoding/binary"
 	"fmt"
+
+	"github.com/kamiwanai/golang-font-tools-lib/opentype"
 )
 
 // Glyph class constants as defined by the OpenType GDEF specification.
@@ -507,56 +509,9 @@ func (g GDEF) MarkAttachClassDefRecords(data []byte) ([]ClassRangeRecord, error)
 }
 
 // decodeCoverage decodes a Coverage table at the given offset.
-// Supports format 1 (glyph list) and format 2 (range array).
+// Delegates to the canonical opentype.DecodeCoverage.
 func decodeCoverage(data []byte, offset int) ([]uint16, error) {
-	if offset+4 > len(data) {
-		return nil, fmt.Errorf("Coverage offset exceeds table")
-	}
-	format := readU16(data, offset)
-	switch format {
-	case 1:
-		glyphCount := int(readU16(data, offset+2))
-		if glyphCount > MaxCoverageGlyphs {
-			return nil, fmt.Errorf("Coverage format 1 glyphCount %d exceeds limit", glyphCount)
-		}
-		if offset+4+glyphCount*2 > len(data) {
-			return nil, fmt.Errorf("Coverage format 1 exceeds table")
-		}
-		glyphs := make([]uint16, glyphCount)
-		for i := 0; i < glyphCount; i++ {
-			glyphs[i] = readU16(data, offset+4+i*2)
-		}
-		return glyphs, nil
-	case 2:
-		rangeCount := int(readU16(data, offset+2))
-		if rangeCount > MaxCoverageRanges {
-			return nil, fmt.Errorf("Coverage format 2 rangeCount %d exceeds limit", rangeCount)
-		}
-		if offset+4+rangeCount*6 > len(data) {
-			return nil, fmt.Errorf("Coverage format 2 exceeds table")
-		}
-		var glyphs []uint16
-		for i := 0; i < rangeCount; i++ {
-			rangeOffset := offset + 4 + i*6
-			start := readU16(data, rangeOffset)
-			end := readU16(data, rangeOffset+2)
-			if end < start {
-				return nil, fmt.Errorf("Coverage range end before start")
-			}
-			for glyphID := start; glyphID <= end; glyphID++ {
-				glyphs = append(glyphs, glyphID)
-				if len(glyphs) > MaxCoverageGlyphs {
-					return nil, fmt.Errorf("Coverage format 2 exceeds max glyphs %d", MaxCoverageGlyphs)
-				}
-				if glyphID == ^uint16(0) {
-					break
-				}
-			}
-		}
-		return glyphs, nil
-	default:
-		return nil, fmt.Errorf("unsupported Coverage format %d", format)
-	}
+	return opentype.DecodeCoverage(data, offset)
 }
 
 // readU16 reads a big-endian uint16 from data at offset.

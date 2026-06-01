@@ -120,9 +120,9 @@ func TestDeltaSetIndexMapFormat1(t *testing.T) {
 	data[6] = 0
 	data[7] = 0
 	data[8] = 0x03
-	m, err := decodeDeltaSetIndexMap(data, 0)
+	m, err := DecodeDeltaSetIndexMap(data, 0)
 	if err != nil {
-		t.Fatalf("decodeDeltaSetIndexMap error: %v", err)
+		t.Fatalf("DecodeDeltaSetIndexMap error: %v", err)
 	}
 	if m.Format != 1 {
 		t.Fatalf("format = %d, want 1", m.Format)

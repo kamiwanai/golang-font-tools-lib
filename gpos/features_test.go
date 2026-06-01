@@ -12,15 +12,15 @@ func TestScriptsParsesFromGPOS(t *testing.T) {
 	gpos := buildGPOSFeatures(
 		[]scriptDef{
 			{
-				tag:            "latn",
-				defaultLangSys: &langSysDef{featureIndices: []uint16{0}},
-				langs: []langSysRecordDef{
-					{tag: "ENG ", langSys: langSysDef{featureIndices: []uint16{0, 1}}},
+				Tag:            "latn",
+				DefaultLangSys: &langSysDef{FeatureIndices: []uint16{0}},
+				Langs: []langSysRecordDef{
+					{Tag: "ENG ", LangSys: langSysDef{FeatureIndices: []uint16{0, 1}}},
 				},
 			},
 		},
 		[]featureDef{
-			{tag: "kern", lookupIndices: []uint16{0, 1}},
+			{Tag: "kern", LookupIndices: []uint16{0, 1}},
 		},
 	)
 	scripts, err := Scripts(gpos)
@@ -53,10 +53,10 @@ func TestScriptsParsesFromGPOS(t *testing.T) {
 func TestScriptsDefaultOnly(t *testing.T) {
 	gpos := buildGPOSFeatures(
 		[]scriptDef{
-			{tag: "latn", defaultLangSys: &langSysDef{featureIndices: []uint16{0}}},
+			{Tag: "latn", DefaultLangSys: &langSysDef{FeatureIndices: []uint16{0}}},
 		},
 		[]featureDef{
-			{tag: "kern", lookupIndices: []uint16{0, 1}},
+			{Tag: "kern", LookupIndices: []uint16{0, 1}},
 		},
 	)
 	scripts, err := Scripts(gpos)
@@ -74,10 +74,10 @@ func TestScriptsDefaultOnly(t *testing.T) {
 func TestFeaturesParsesFromGPOS(t *testing.T) {
 	gpos := buildGPOSFeatures(
 		[]scriptDef{
-			{tag: "latn", defaultLangSys: &langSysDef{featureIndices: []uint16{0}}},
+			{Tag: "latn", DefaultLangSys: &langSysDef{FeatureIndices: []uint16{0}}},
 		},
 		[]featureDef{
-			{tag: "kern", lookupIndices: []uint16{0, 1}},
+			{Tag: "kern", LookupIndices: []uint16{0, 1}},
 		},
 	)
 	features, err := Features(gpos)
@@ -98,10 +98,10 @@ func TestFeaturesParsesFromGPOS(t *testing.T) {
 func TestActiveLookupsForKernFeature(t *testing.T) {
 	gpos := buildGPOSFeatures(
 		[]scriptDef{
-			{tag: "latn", defaultLangSys: &langSysDef{featureIndices: []uint16{0}}},
+			{Tag: "latn", DefaultLangSys: &langSysDef{FeatureIndices: []uint16{0}}},
 		},
 		[]featureDef{
-			{tag: "kern", lookupIndices: []uint16{0, 1}},
+			{Tag: "kern", LookupIndices: []uint16{0, 1}},
 		},
 	)
 	lookups, err := ActiveLookups(gpos, "latn", "dflt", "kern")
@@ -119,10 +119,10 @@ func TestActiveLookupsForKernFeature(t *testing.T) {
 func TestActiveLookupsNoMatch(t *testing.T) {
 	gpos := buildGPOSFeatures(
 		[]scriptDef{
-			{tag: "latn", defaultLangSys: &langSysDef{featureIndices: []uint16{0}}},
+			{Tag: "latn", DefaultLangSys: &langSysDef{FeatureIndices: []uint16{0}}},
 		},
 		[]featureDef{
-			{tag: "kern", lookupIndices: []uint16{0}},
+			{Tag: "kern", LookupIndices: []uint16{0}},
 		},
 	)
 	lookups, err := ActiveLookups(gpos, "arab", "", "kern")
@@ -138,12 +138,12 @@ func TestActiveLookupsWithReqFeature(t *testing.T) {
 	gpos := buildGPOSFeatures(
 		[]scriptDef{
 			{
-				tag:            "latn",
-				defaultLangSys: &langSysDef{reqFeatureIndex: 0, featureIndices: []uint16{0}},
+				Tag:            "latn",
+				DefaultLangSys: &langSysDef{ReqFeatureIndex: 0, FeatureIndices: []uint16{0}},
 			},
 		},
 		[]featureDef{
-			{tag: "kern", lookupIndices: []uint16{5}},
+			{Tag: "kern", LookupIndices: []uint16{5}},
 		},
 	)
 	lookups, err := ActiveLookups(gpos, "latn", "dflt", "kern")
