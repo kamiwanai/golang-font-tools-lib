@@ -90,7 +90,13 @@ func (font *Font) GlyphBBoxes() ([]GlyphBBox, error) {
 			continue
 		}
 
-		// numberOfContours at offset 0 (int16), then bbox at offset 2-9
+		// Compound glyphs (numberOfContours < 0) have no stored bbox; the
+		// 8 bytes at offset+2..offset+9 are component flags/args, not a bbox.
+		if int16(binary.BigEndian.Uint16(glyfData[offset:])) < 0 {
+			continue
+		}
+
+		// Simple glyph: numberOfContours at offset 0, bbox at offset 2-9.
 		bboxes[i].XMin = int16(binary.BigEndian.Uint16(glyfData[offset+2:]))
 		bboxes[i].YMin = int16(binary.BigEndian.Uint16(glyfData[offset+4:]))
 		bboxes[i].XMax = int16(binary.BigEndian.Uint16(glyfData[offset+6:]))

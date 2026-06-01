@@ -245,7 +245,7 @@ func decodeDeltaSetIndexMap(data []byte, offset int) (DeltaSetIndexMap, error) {
 		return DeltaSetIndexMap{}, fmt.Errorf("DeltaSetIndexMap unsupported format %d", format)
 	}
 
-	if offset+3 > len(data) {
+	if offset+4 > len(data) {
 		return DeltaSetIndexMap{}, fmt.Errorf("DeltaSetIndexMap header too short")
 	}
 	entryFormat := data[offset+1]

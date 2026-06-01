@@ -43,7 +43,7 @@ func DecodeDeltaSetIndexMap(data []byte, offset int) (DeltaSetIndexMap, error) {
 
 // Decode parses an HVAR table from raw bytes.
 func Decode(data []byte) (HVAR, error) {
-	if len(data) < 8 {
+	if len(data) < 12 {
 		return HVAR{}, fmt.Errorf("HVAR header too short: %d bytes", len(data))
 	}
 

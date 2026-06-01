@@ -40,6 +40,7 @@ type GlyphComponent struct {
 	WeHaveXY     bool // bit 6: WE_HAVE_AN_X_AND_Y_SCALE
 	WeHaveTwoByTwo bool // bit 7: WE_HAVE_A_TWO_BY_TWO
 	MatchPoints  uint16
+	MatchPoint2  uint16
 	Scale        float64
 	ScaleX       float64
 	ScaleY       float64
@@ -86,12 +87,13 @@ func (font *Font) GlyphOutlines() ([]GlyphOutline, error) {
 			continue
 		}
 		numContours := int(int16(binary.BigEndian.Uint16(glyfData[offset:])))
-		outline.XMin = int16(binary.BigEndian.Uint16(glyfData[offset+2:]))
-		outline.YMin = int16(binary.BigEndian.Uint16(glyfData[offset+4:]))
-		outline.XMax = int16(binary.BigEndian.Uint16(glyfData[offset+6:]))
-		outline.YMax = int16(binary.BigEndian.Uint16(glyfData[offset+8:]))
 
 		if numContours >= 0 {
+			// Simple glyph: bbox lives at offset+2..offset+9.
+			outline.XMin = int16(binary.BigEndian.Uint16(glyfData[offset+2:]))
+			outline.YMin = int16(binary.BigEndian.Uint16(glyfData[offset+4:]))
+			outline.XMax = int16(binary.BigEndian.Uint16(glyfData[offset+6:]))
+			outline.YMax = int16(binary.BigEndian.Uint16(glyfData[offset+8:]))
 			contours, err := parseSimpleGlyph(glyfData, offset, numContours, nextOffset)
 			if err != nil { return nil, fmt.Errorf("glyph %d: %w", i, err) }
 			outline.Contours = contours
@@ -240,7 +242,7 @@ func parseCompoundGlyph(data []byte, offset int) ([]GlyphComponent, error) {
 				comp.YOffset = int16(binary.BigEndian.Uint16(data[pos+2:]))
 			} else {
 				comp.MatchPoints = binary.BigEndian.Uint16(data[pos:])
-				// second word is also match point
+				comp.MatchPoint2 = binary.BigEndian.Uint16(data[pos+2:])
 			}
 			pos += 4
 		} else {

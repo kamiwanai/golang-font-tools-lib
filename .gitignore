@@ -13,6 +13,8 @@ OPEN_SOURCE_READINESS.md
 # Internal docs
 GAP_ANALYSIS.md
 ROADMAP.md
+REFACTOR_VERDICT.md
+DEFERRED.md
 
 # Reference code from other projects (not library code)
 references/

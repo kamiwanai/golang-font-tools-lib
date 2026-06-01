@@ -78,12 +78,13 @@ func expandCompound(glyfData []byte, locaOffsets []int, glyphIndex int, glyphOrd
 	}
 
 	numContours := int(int16(binary.BigEndian.Uint16(glyfData[offset:])))
-	outline.XMin = int16(binary.BigEndian.Uint16(glyfData[offset+2:]))
-	outline.YMin = int16(binary.BigEndian.Uint16(glyfData[offset+4:]))
-	outline.XMax = int16(binary.BigEndian.Uint16(glyfData[offset+6:]))
-	outline.YMax = int16(binary.BigEndian.Uint16(glyfData[offset+8:]))
 
 	if numContours >= 0 {
+		// Simple glyph: bbox at offset+2..offset+9.
+		outline.XMin = int16(binary.BigEndian.Uint16(glyfData[offset+2:]))
+		outline.YMin = int16(binary.BigEndian.Uint16(glyfData[offset+4:]))
+		outline.XMax = int16(binary.BigEndian.Uint16(glyfData[offset+6:]))
+		outline.YMax = int16(binary.BigEndian.Uint16(glyfData[offset+8:]))
 		contours, err := parseSimpleGlyph(glyfData, offset, numContours, nextOffset)
 		if err != nil {
 			return nil, fmt.Errorf("glyph %d: %w", glyphIndex, err)
@@ -91,6 +92,9 @@ func expandCompound(glyfData []byte, locaOffsets []int, glyphIndex int, glyphOrd
 		outline.Contours = contours
 		return outline, nil
 	}
+
+	// Compound glyph: no stored bbox; the 8 bytes at offset+2..offset+9
+	// are component flags/args. Bbox is left at zero.
 
 	outline.Compound = true
 	components, err := parseCompoundGlyph(glyfData, offset)

@@ -326,6 +326,7 @@ func (font *Font) Kern() ([]KernSubtable, error) {
 	}
 	return subtables, nil
 }
+
 // Panose is the 10-byte PANOSE classification from the OS/2 table.
 type Panose struct {
 	FamilyType      uint8
@@ -493,7 +494,7 @@ func (font *Font) OS2() (OS2, error) {
 		os2.MaxContext = readU16(data, 94)
 	}
 
-return os2, nil
+	return os2, nil
 }
 
 // GSUB returns the raw GSUB table data. Returns an error if the font has no

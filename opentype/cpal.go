@@ -77,17 +77,21 @@ func (font *Font) CPAL() (*CPALTable, error) {
 			paletteFirstColorIndex[i] = int(binary.BigEndian.Uint16(data[12+i*2:]))
 		}
 	} else {
-		// Version 1: paletteTypesOffset at offset 28
-		// But for simplicity, if there are no types, try the same layout
-		if len(data) >= 16 {
-			// Try reading as version 1
-			paletteTypesOffset := int(binary.BigEndian.Uint32(data[12:]))
-			_ = paletteTypesOffset // reserved for future use
+		// Version 1: paletteLabelsOffset(12), paletteEntryLabelsOffset(16),
+		// paletteTypesOffset(20), then colorRecordIndices[uint16] at offset 24.
+		paletteTypesOffset := uint32(0)
+		if len(data) >= 24 {
+			paletteTypesOffset = binary.BigEndian.Uint32(data[20:])
 		}
-		// Fall back: first N palettes start at index 0
+		if paletteTypesOffset != 0 {
+			return nil, fmt.Errorf("CPAL v1 palette types not supported")
+		}
+		if 24+numPalettes*2 > len(data) {
+			return nil, fmt.Errorf("CPAL v1 colorRecordIndices exceed table")
+		}
 		paletteFirstColorIndex = make([]int, numPalettes)
 		for i := 0; i < numPalettes; i++ {
-			paletteFirstColorIndex[i] = i * int(numPaletteEntries)
+			paletteFirstColorIndex[i] = int(binary.BigEndian.Uint16(data[24+i*2:]))
 		}
 	}
 

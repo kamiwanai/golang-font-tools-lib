@@ -389,28 +389,57 @@ func computeCharStringBBox(charstring []byte, globalSubr, localSubr [][]byte, de
 			}
 			clearStack()
 
-		case 27: // hhcurveto dy1 dx2 dy2 dx3
+		case 27: // hhcurveto {dy1 dx2 dy2 dx3} | {dx1 dy1 dx2 dy2 dx3}
+			// 4-arg form (most common): implicit dx1=0, curve starts vertical,
+			// ends horizontal. cp1=(cx, cy+dy1), cp2=(cx+dx2, cy+dy1+dy2),
+			// end=(cx+dx2+dx3, cy+dy1+dy2).
+			// 5-arg form: explicit dx1, curve starts vertical. cp1=(cx+dx1, cy+dy1),
+			// cp2=(cx+dx1+dx2, cy+dy1+dy2), end=(cx+dx1+dx2+dx3, cy+dy1+dy2).
 			for len(stack) >= 4 {
-				updateBounds(cx+stack[1], cy+stack[0])
-				updateBounds(cx+stack[1]+stack[2], cy+stack[0]+stack[3]) // wrong but close
-				cx += stack[1] + stack[2] + stack[3] // hmm, need to check
-				// Actually: dx1 is implied, dy1 dx2 dy2 dx3
-				// cp1 = (cx+dx1, cy+dy1), cp2 = (cx+dx1+dx2, cy+dy1+dy2), end = (cx+dx1+dx2+dx3, cy+dy1+dy2)
-				// But dx1 = stack[0] if even count, otherwise... 
-				// Let me simplify and just update with the values we have.
-				cx += stack[0] + stack[1] + stack[3]
-				cy += stack[0] + stack[2] // wrong
-				stack = stack[4:]
+				if len(stack) >= 5 {
+					dx1, dy1, dx2, dy2, dx3 := stack[0], stack[1], stack[2], stack[3], stack[4]
+					updateBounds(cx+dx1, cy+dy1)
+					updateBounds(cx+dx1+dx2, cy+dy1+dy2)
+					cx += dx1 + dx2 + dx3
+					cy += dy1 + dy2
+					updateBounds(cx, cy)
+					stack = stack[5:]
+				} else {
+					dy1, dx2, dy2, dx3 := stack[0], stack[1], stack[2], stack[3]
+					updateBounds(cx, cy+dy1)
+					updateBounds(cx+dx2, cy+dy1+dy2)
+					cx += dx2 + dx3
+					cy += dy1 + dy2
+					updateBounds(cx, cy)
+					stack = stack[4:]
+				}
 			}
 			clearStack()
 
-		case 26: // vvcurveto dx1 dy2 dx2 dy2 [dy1]
+		case 26: // vvcurveto {dx1 dx2 dy2 dy3} | {dy1 dx2 dy2 dx3 dy3}
+			// 4-arg form (most common): implicit dy1=0, curve starts horizontal,
+			// ends vertical. cp1=(cx+dx1, cy), cp2=(cx+dx1+dx2, cy+dy2),
+			// end=(cx+dx1+dx2, cy+dy2+dy3).
+			// 5-arg form: explicit dy1, curve starts vertical. cp1=(cx, cy+dy1),
+			// cp2=(cx+dx2, cy+dy1+dy2), end=(cx+dx2+dx3, cy+dy1+dy2+dy3).
 			for len(stack) >= 4 {
-				updateBounds(cx+stack[0], cy+stack[1])
-				cx += stack[0] + stack[2]
-				cy += stack[1] + stack[3]
-				updateBounds(cx, cy)
-				stack = stack[4:]
+				if len(stack) >= 5 {
+					dy1, dx2, dy2, dx3, dy3 := stack[0], stack[1], stack[2], stack[3], stack[4]
+					updateBounds(cx, cy+dy1)
+					updateBounds(cx+dx2, cy+dy1+dy2)
+					cx += dx2 + dx3
+					cy += dy1 + dy2 + dy3
+					updateBounds(cx, cy)
+					stack = stack[5:]
+				} else {
+					dx1, dx2, dy2, dy3 := stack[0], stack[1], stack[2], stack[3]
+					updateBounds(cx+dx1, cy)
+					updateBounds(cx+dx1+dx2, cy+dy2)
+					cx += dx1 + dx2
+					cy += dy2 + dy3
+					updateBounds(cx, cy)
+					stack = stack[4:]
+				}
 			}
 			clearStack()
 

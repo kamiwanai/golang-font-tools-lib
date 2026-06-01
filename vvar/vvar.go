@@ -38,7 +38,7 @@ func DecodeItemVariationStore(data []byte, offset int) (ItemVariationStore, erro
 
 // Decode parses a VVAR table from raw bytes.
 func Decode(data []byte) (VVAR, error) {
-	if len(data) < 8 {
+	if len(data) < 12 {
 		return VVAR{}, fmt.Errorf("VVAR header too short: %d bytes", len(data))
 	}
 
