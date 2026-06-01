@@ -15,11 +15,6 @@ type (
 	gsubFeatureDef       = otfeatures.FeatureDef
 )
 
-// gsubEncodeLangSys builds raw bytes for one LangSys.
-func gsubEncodeLangSys(ls gsubLangSysDef) []byte {
-	return otfeatures.EncodeLangSys(ls)
-}
-
 // buildGSUBFeatures builds a GSUB-like table with the given scripts and features.
 func buildGSUBFeatures(scripts []gsubScriptDef, features []gsubFeatureDef) []byte {
 	return otfeatures.BuildTable(scripts, features)

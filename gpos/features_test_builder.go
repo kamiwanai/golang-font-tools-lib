@@ -15,11 +15,6 @@ type (
 	featureDef       = otfeatures.FeatureDef
 )
 
-// encodeLangSys builds raw bytes for one LangSys.
-func encodeLangSys(ls langSysDef) []byte {
-	return otfeatures.EncodeLangSys(ls)
-}
-
 // buildGPOSFeatures builds a GPOS-like table with the given scripts and features.
 func buildGPOSFeatures(scripts []scriptDef, features []featureDef) []byte {
 	return otfeatures.BuildTable(scripts, features)
