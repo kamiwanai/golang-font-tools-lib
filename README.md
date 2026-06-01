@@ -201,7 +201,7 @@ backend, embedded firmware, etc.), a commercial license is available.
 | Single product / company | $700/year | Proprietary license, no source disclosure obligation, 1 year of updates |
 | OEM / redistribution | $2,000/year | Sublicensing rights, custom terms |
 
-Contact: **inari1337@gmail.com**
+Contact: **kamiwanaiii@gmail.com**
 
 ### Enforcement
 
