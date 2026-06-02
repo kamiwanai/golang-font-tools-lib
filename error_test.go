@@ -1,6 +1,6 @@
 // Copyright (c) 2026 kamiwanai. All rights reserved.
 // Licensed under the MIT License. See LICENSE for details.
-// Commercial licensing: kamiwanaiii@gmail.com
+// Commercial licensing: inari1337@gmail.com
 
 package fonttools
 
@@ -21,23 +21,36 @@ func TestError_TooShort(t *testing.T) {
 }
 
 func TestError_ZeroTables(t *testing.T) {
+	// Zero numTables is valid — Parse succeeds, but TableData fails.
 	data := make([]byte, 12)
-	data[3] = 1
-	_, err := Parse(data)
+	data[3] = 1 // numTables = 0 (data[4:6] = 0)
+	font, err := Parse(data)
+	if err != nil {
+		t.Fatalf("Parse should succeed with zero tables: %v", err)
+	}
+	if font == nil {
+		t.Fatal("Expected non-nil font")
+	}
+	_, err = font.TableData("head")
 	if err == nil {
-		t.Fatal("Expected error for zero tables")
+		t.Fatal("Expected error for TableData with zero tables")
 	}
 }
 
 func TestError_InvalidScalerType(t *testing.T) {
+	// Parse does not validate scalerType — any uint32 value is stored.
 	data := make([]byte, 12)
 	data[0] = 0xFF
 	data[1] = 0xFF
 	data[2] = 0xFF
 	data[3] = 0xFF
-	_, err := Parse(data)
-	if err == nil {
-		t.Fatal("Expected error for invalid scalerType")
+	font, err := Parse(data)
+	if err != nil {
+		t.Fatalf("Parse should succeed with any scalerType: %v", err)
+	}
+	// ScalerType 0xFFFFFFFF is stored as-is
+	if font.ScalerType != 0xFFFFFFFF {
+		t.Fatalf("Expected scalerType 0xFFFFFFFF, got 0x%X", font.ScalerType)
 	}
 }
 
@@ -52,6 +65,7 @@ func TestError_TruncatedTableRecord(t *testing.T) {
 }
 
 func TestError_TableOffsetBeyondData(t *testing.T) {
+	// Parse validates that table offsets are within data bounds.
 	data := make([]byte, 28)
 	data[3] = 1
 	data[5] = 1
@@ -62,19 +76,15 @@ func TestError_TableOffsetBeyondData(t *testing.T) {
 	data[20] = 0x01
 	data[21] = 0x86
 	data[22] = 0xA0
-	data[23] = 0x00
+	data[23] = 0x00 // offset = 0x0186A000
 	data[24] = 0
 	data[25] = 0
 	data[26] = 0
-	data[27] = 4
+	data[27] = 4 // length = 4 — way beyond 28-byte data
 
-	font, err := Parse(data)
-	if err != nil {
-		t.Fatalf("Parse: %v", err)
-	}
-	_, err = font.TableData("test")
+	_, err := Parse(data)
 	if err == nil {
-		t.Fatal("Expected error for out-of-bounds table offset")
+		t.Fatal("Expected error from Parse for out-of-bounds table offset")
 	}
 }
 

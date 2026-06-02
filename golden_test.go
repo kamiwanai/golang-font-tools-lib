@@ -259,3 +259,54 @@ func TestGoldenFonts_GDEF(t *testing.T) {
 		})
 	}
 }
+
+func TestGoldenFonts_FVARInstances(t *testing.T) {
+	if len(goldenFonts) == 0 {
+		t.Skip("No golden font files")
+	}
+	for _, path := range goldenFonts {
+		t.Run(filepath.Base(path), func(t *testing.T) {
+			font, err := ParseFile(path)
+			if err != nil {
+				t.Fatalf("ParseFile: %v", err)
+			}
+			fv, err := font.FVARTable()
+			if err != nil {
+				t.Logf("FVAR not present (expected for static fonts)")
+				return
+			}
+			if len(fv.Axes) > 0 && len(fv.Instances) == 0 {
+				t.Logf("variable font with %d axes but no named instances", len(fv.Axes))
+			}
+			t.Logf("axes=%d instances=%d", len(fv.Axes), len(fv.Instances))
+			for _, inst := range fv.Instances {
+				t.Logf("  instance: nameID=%d", inst.SubfamilyNameID)
+			}
+		})
+	}
+}
+
+func TestGoldenFonts_GVAR(t *testing.T) {
+	if len(goldenFonts) == 0 {
+		t.Skip("No golden font files")
+	}
+	for _, path := range goldenFonts {
+		t.Run(filepath.Base(path), func(t *testing.T) {
+			font, err := ParseFile(path)
+			if err != nil {
+				t.Fatalf("ParseFile: %v", err)
+			}
+			gv, err := font.GVARTable()
+			if err != nil {
+				t.Logf("GVAR not present (expected for static fonts)")
+				return
+			}
+			numGlyphs, _ := font.NumGlyphs()
+			if len(gv.Glyphs) != numGlyphs {
+				t.Errorf("GVAR GlyphCount=%d, font NumGlyphs=%d", len(gv.Glyphs), numGlyphs)
+			}
+			t.Logf("GVAR: glyphs=%d offsets=%d sharedTuples=%d",
+				len(gv.Glyphs), len(gv.Glyphs), len(gv.SharedTuples))
+		})
+	}
+}

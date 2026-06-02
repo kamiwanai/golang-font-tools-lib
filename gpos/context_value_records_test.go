@@ -1,6 +1,6 @@
 // Copyright (c) 2026 kamiwanai. All rights reserved.
 // Licensed under the MIT License. See LICENSE for details.
-// Commercial licensing: kamiwanaiii@gmail.com
+// Commercial licensing: inari1337@gmail.com
 
 package gpos
 
@@ -20,13 +20,13 @@ func buildMinimalContextGPOS() []byte {
 	w16 := func(v uint16) { b = append(b, byte(v>>8), byte(v)) }
 
 	// ---- GPOS header (10 bytes) ----
-	w16(1)  // majorVersion
-	w16(0)  // minorVersion
-	w16(0)  // scriptListOffset (none)
-	w16(0)  // featureListOffset (none)
+	w16(1) // majorVersion
+	w16(0) // minorVersion
+	w16(0) // scriptListOffset (none)
+	w16(0) // featureListOffset (none)
 	// lookupListOffset placeholder (will fix later)
 	lookupListOffIdx := len(b)
-	w16(0)  // placeholder
+	w16(0) // placeholder
 
 	// ---- LookupList ----
 	// 2 lookups
@@ -34,21 +34,20 @@ func buildMinimalContextGPOS() []byte {
 	patch16(lookupListOffIdx, uint16(len(b))) // fix up lookupListOffset
 
 	lookupListStart := len(b)
-	w16(2)  // lookupCount = 2
+	w16(2) // lookupCount = 2
 
 	// lookupOffsets: relative to LookupList start
-	// We'll write placeholders and patch them after building each lookup
 	lookup0OffIdx := len(b)
-	w16(0)  // placeholder for Lookup 0 offset
+	w16(0) // placeholder for Lookup 0 offset
 	lookup1OffIdx := len(b)
-	w16(0)  // placeholder for Lookup 1 offset
+	w16(0) // placeholder for Lookup 1 offset
 
 	// ---- Lookup 0: ContextPos (type 7) format 1 ----
 	patch16(lookup0OffIdx, uint16(len(b)-lookupListStart))
 	lookup0Start := len(b)
-	w16(7)  // lookupType = ContextPos
-	w16(0)  // lookupFlag
-	w16(1)  // subTableCount = 1
+	w16(7) // lookupType = ContextPos
+	w16(0) // lookupFlag
+	w16(1) // subTableCount = 1
 
 	// Subtable offset placeholder (relative to start of this lookup)
 	sub0OffIdx := len(b)
@@ -57,61 +56,55 @@ func buildMinimalContextGPOS() []byte {
 	// ---- Context Format 1 Subtable ----
 	patch16(sub0OffIdx, uint16(len(b)-lookup0Start))
 	// sub0 start
-	w16(1)  // format = 1
-	// coverageOffset (from subtable start)
-	// After: format(2) + covOff(2) + subRuleSetCount(2) + subRuleSetOff(2) = 8
-	w16(8)  // coverageOffset
-	w16(1)  // subRuleSetCount = 1
-	// SubRuleSet offset (from subtable start): after coverage
-	// Coverage: format(2) + count(2) + 1*glyph(2) = 6
-	subRuleSetOff := 8 + 6  // subtable header(8) + coverage(6)
+	w16(1) // format = 1
+	w16(8) // coverageOffset
+	w16(1) // subRuleSetCount = 1
+	// SubRuleSet offset: after subtable header(8) + coverage(6)
+	subRuleSetOff := 8 + 6
 	w16(uint16(subRuleSetOff))
 
 	// Coverage (format 1): glyph A (ID 1)
-	w16(1)  // coverageFormat
-	w16(1)  // glyphCount
-	w16(1)  // glyphID = A
+	w16(1) // coverageFormat
+	w16(1) // glyphCount
+	w16(1) // glyphID = A
 
 	// SubRuleSet: 1 SubRule
-	w16(1)  // subRuleCount
-	w16(2)  // SubRule offset from SubRuleSet start (pointing right after this offset)
+	w16(1) // subRuleCount
+	// SubRule at offset 4: after count(2)+offset(2) = 4 bytes header
+	w16(4)
 
-	// SubRule:
-	// glyphCount(2) + inputGlyphs[count-1]*2 + substCount(2) + substRecords[count]*4
-	// Sequence: [coverage_glyph=A, V] => glyphCount=2, inputGlyphs=[V]
-	w16(2)  // glyphCount (includes first glyph from coverage)
-	w16(2)  // inputGlyph = V (glyph ID 2)
-	w16(1)  // substitutionCount = 1
-	// NestedLookupRef: sequenceIndex(2) + lookupListIndex(2)
-	w16(1)  // sequenceIndex = 1 (the V glyph)
-	w16(1)  // lookupListIndex = 1 (points to lookup 1)
+	// SubRule: glyphCount(2) + posCount(2) + inputGlyphs[gc-1]*2 + records[pc]*4
+	w16(2) // glyphCount = 2 (includes first from coverage)
+	w16(1) // posCount = 1
+	w16(2) // inputGlyph = V (glyph ID 2)
+	// PosLookupRecord: sequenceIndex(2) + lookupListIndex(2)
+	w16(1) // sequenceIndex = 1 (the V glyph)
+	w16(1) // lookupListIndex = 1 (points to lookup 1)
 
 	// ---- Lookup 1: SinglePos (type 1) format 1 ----
 	patch16(lookup1OffIdx, uint16(len(b)-lookupListStart))
-	_ = len(b)
-	w16(1)  // lookupType = SinglePos
-	w16(0)  // lookupFlag
-	w16(1)  // subTableCount = 1
-	// Subtable offset (from lookup start)
-	w16(6)  // after type(2)+flag(2)+count(2)+offset(2) = 8? No, 6: type+flag+count = 6 bytes, offset at 6
+	w16(1) // lookupType = SinglePos
+	w16(0) // lookupFlag
+	w16(1) // subTableCount = 1
+	// Subtable at offset 8: after type(2)+flag(2)+count(2)+offset(2) = 8 bytes
+	w16(8)
 
 	// SinglePos Format 1 subtable
-	// format(2) + coverageOffset(2) + valueFormat(2) + valueRecord(2 for XAdvance)
-	_ = len(b)
-	w16(1)  // format = 1
-	w16(4)  // coverageOffset: after format(2)+offset(2)=4
+	// format(2)+covOff(2)+valFmt(2)+value(2) = 8, coverage at offset 8
+	w16(1)       // format = 1
+	w16(8)       // coverageOffset
 	w16(0x0004)  // valueFormat = XAdvance
 	w16(0xFFF0)  // XAdvance = -16
 
 	// Coverage: format1, 1 glyph = V (glyph ID 2)
-	w16(1)  // format
-	w16(1)  // count
-	w16(2)  // glyph V
+	w16(1) // format
+	w16(1) // count
+	w16(2) // glyph V
 
 	return b
 }
 
-func _TestDecodeContextValueRecords_SinglePos(t *testing.T) {
+func TestDecodeContextValueRecords_SinglePos(t *testing.T) {
 	data := buildMinimalContextGPOS()
 	glyphOrder := []string{".notdef", "A", "V", "T"}
 
