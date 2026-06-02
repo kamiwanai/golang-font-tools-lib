@@ -64,7 +64,7 @@ Uses golang-font-tools-lib by kamiwanai (https://github.com/kamiwanai/golang-fon
 
 ## How to purchase
 
-1. Email **inari1337@gmail.com** with:
+1. Email **kamiwanaiii@gmail.com** with:
    - Your company name and size
    - Intended use case
    - Which tier you're interested in

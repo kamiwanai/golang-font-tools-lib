@@ -1,6 +1,6 @@
 // Copyright (c) 2026 kamiwanai. All rights reserved.
 // Licensed under the MIT License. See LICENSE for details.
-// Commercial licensing: inari1337@gmail.com
+// Commercial licensing: kamiwanaiii@gmail.com
 
 // Package stat decodes the STAT (Style Attributes) table from OpenType
 // variable fonts. The STAT table provides information about the stylistic

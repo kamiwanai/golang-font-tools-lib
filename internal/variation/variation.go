@@ -1,6 +1,6 @@
 // Copyright (c) 2026 kamiwanai. All rights reserved.
 // Licensed under the MIT License. See LICENSE for details.
-// Commercial licensing: inari1337@gmail.com
+// Commercial licensing: kamiwanaiii@gmail.com
 
 // Package variation decodes OpenType ItemVariationStore, DeltaSetIndexMap,
 // and related shared types used by HVAR, VVAR, MVAR, and GDEF v2.
