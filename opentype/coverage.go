@@ -22,10 +22,10 @@ func DecodeCoverage(data []byte, offset int) ([]uint16, error) {
 	if offset+4 > len(data) {
 		return nil, fmt.Errorf("Coverage offset exceeds table")
 	}
-	format := readU16(data, offset)
+	format := ReadU16(data, offset)
 	switch format {
 	case 1:
-		glyphCount := int(readU16(data, offset+2))
+		glyphCount := int(ReadU16(data, offset+2))
 		if glyphCount > MaxCoverageGlyphs {
 			return nil, fmt.Errorf("Coverage format 1 glyphCount %d exceeds limit %d", glyphCount, MaxCoverageGlyphs)
 		}
@@ -34,11 +34,11 @@ func DecodeCoverage(data []byte, offset int) ([]uint16, error) {
 		}
 		glyphs := make([]uint16, glyphCount)
 		for i := 0; i < glyphCount; i++ {
-			glyphs[i] = readU16(data, offset+4+i*2)
+			glyphs[i] = ReadU16(data, offset+4+i*2)
 		}
 		return glyphs, nil
 	case 2:
-		rangeCount := int(readU16(data, offset+2))
+		rangeCount := int(ReadU16(data, offset+2))
 		if rangeCount > MaxCoverageRanges {
 			return nil, fmt.Errorf("Coverage format 2 rangeCount %d exceeds limit %d", rangeCount, MaxCoverageRanges)
 		}
@@ -48,8 +48,8 @@ func DecodeCoverage(data []byte, offset int) ([]uint16, error) {
 		var glyphs []uint16
 		for i := 0; i < rangeCount; i++ {
 			rangeOffset := offset + 4 + i*6
-			start := readU16(data, rangeOffset)
-			end := readU16(data, rangeOffset+2)
+			start := ReadU16(data, rangeOffset)
+			end := ReadU16(data, rangeOffset+2)
 			if end < start {
 				return nil, fmt.Errorf("Coverage range end before start")
 			}

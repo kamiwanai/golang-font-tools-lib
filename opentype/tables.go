@@ -59,24 +59,24 @@ func (font *Font) Head() (Head, error) {
 		return Head{}, fmt.Errorf("head table too short: %d bytes", len(data))
 	}
 	return Head{
-		MajorVersion:       readU16(data, 0),
-		MinorVersion:       readU16(data, 2),
+		MajorVersion:       ReadU16(data, 0),
+		MinorVersion:       ReadU16(data, 2),
 		FontRevision:        readU32(data, 4),
 		ChecksumAdjustment: readU32(data, 8),
 		MagicNumber:         readU32(data, 12),
-		Flags:               readU16(data, 16),
-		UnitsPerEm:          readU16(data, 18),
+		Flags:               ReadU16(data, 16),
+		UnitsPerEm:          ReadU16(data, 18),
 		Created:             binary.BigEndian.Uint64(data[20:28]),
 		Modified:            binary.BigEndian.Uint64(data[28:36]),
-		XMin:                int16(readU16(data, 36)),
-		YMin:                int16(readU16(data, 38)),
-		XMax:                int16(readU16(data, 40)),
-		YMax:                int16(readU16(data, 42)),
-		MacStyle:            readU16(data, 44),
-		LowestRecPPEM:       readU16(data, 46),
-		FontDirectionHint:   int16(readU16(data, 48)),
-		IndexToLocFormat:    int16(readU16(data, 50)),
-		GlyphDataFormat:     int16(readU16(data, 52)),
+		XMin:                int16(ReadU16(data, 36)),
+		YMin:                int16(ReadU16(data, 38)),
+		XMax:                int16(ReadU16(data, 40)),
+		YMax:                int16(ReadU16(data, 42)),
+		MacStyle:            ReadU16(data, 44),
+		LowestRecPPEM:       ReadU16(data, 46),
+		FontDirectionHint:   int16(ReadU16(data, 48)),
+		IndexToLocFormat:    int16(ReadU16(data, 50)),
+		GlyphDataFormat:     int16(ReadU16(data, 52)),
 	}, nil
 }
 
@@ -120,19 +120,19 @@ func (font *Font) Hhea() (Hhea, error) {
 		return Hhea{}, fmt.Errorf("hhea table too short: %d bytes", len(data))
 	}
 	return Hhea{
-		MajorVersion:       readU16(data, 0),
-		MinorVersion:       readU16(data, 2),
-		Ascender:           int16(readU16(data, 4)),
-		Descender:          int16(readU16(data, 6)),
-		LineGap:            int16(readU16(data, 8)),
-		AdvanceWidthMax:    readU16(data, 10),
-		MinLeftSideBearing: int16(readU16(data, 12)),
-		MinRightSideBearing: int16(readU16(data, 14)),
-		XMaxExtent:         int16(readU16(data, 16)),
-		CaretSlopeRise:     int16(readU16(data, 18)),
-		CaretSlopeRun:      int16(readU16(data, 20)),
-		CaretOffset:        int16(readU16(data, 22)),
-		NumberOfHMetrics:   readU16(data, 34),
+		MajorVersion:       ReadU16(data, 0),
+		MinorVersion:       ReadU16(data, 2),
+		Ascender:           int16(ReadU16(data, 4)),
+		Descender:          int16(ReadU16(data, 6)),
+		LineGap:            int16(ReadU16(data, 8)),
+		AdvanceWidthMax:    ReadU16(data, 10),
+		MinLeftSideBearing: int16(ReadU16(data, 12)),
+		MinRightSideBearing: int16(ReadU16(data, 14)),
+		XMaxExtent:         int16(ReadU16(data, 16)),
+		CaretSlopeRise:     int16(ReadU16(data, 18)),
+		CaretSlopeRun:      int16(ReadU16(data, 20)),
+		CaretOffset:        int16(ReadU16(data, 22)),
+		NumberOfHMetrics:   ReadU16(data, 34),
 	}, nil
 }
 
@@ -157,7 +157,7 @@ func (font *Font) Hmtx() ([]HMetric, error) {
 	if len(hheaData) < 36 {
 		return nil, fmt.Errorf("hhea table too short: %d bytes", len(hheaData))
 	}
-	numberOfHMetrics := int(readU16(hheaData, 34))
+	numberOfHMetrics := int(ReadU16(hheaData, 34))
 
 	maxpData, err := font.TableData("maxp")
 	if err != nil {
@@ -166,7 +166,7 @@ func (font *Font) Hmtx() ([]HMetric, error) {
 	if len(maxpData) < 6 {
 		return nil, fmt.Errorf("maxp table too short: %d bytes", len(maxpData))
 	}
-	numGlyphs := int(readU16(maxpData, 4))
+	numGlyphs := int(ReadU16(maxpData, 4))
 
 	if numberOfHMetrics > numGlyphs {
 		return nil, fmt.Errorf("hmtx: numberOfHMetrics %d exceeds numGlyphs %d", numberOfHMetrics, numGlyphs)
@@ -186,8 +186,8 @@ func (font *Font) Hmtx() ([]HMetric, error) {
 	for i := 0; i < numberOfHMetrics; i++ {
 		offset := i * 4
 		metrics[i] = HMetric{
-			AdvanceWidth:    readU16(data, offset),
-			LeftSideBearing: int16(readU16(data, offset+2)),
+			AdvanceWidth:    ReadU16(data, offset),
+			LeftSideBearing: int16(ReadU16(data, offset+2)),
 		}
 	}
 	// Remaining glyphs share the last advance width.
@@ -197,7 +197,7 @@ func (font *Font) Hmtx() ([]HMetric, error) {
 		for i := numberOfHMetrics; i < numGlyphs; i++ {
 			metrics[i] = HMetric{
 				AdvanceWidth:    lastAdvanceWidth,
-				LeftSideBearing: int16(readU16(data, lsbOffset)),
+				LeftSideBearing: int16(ReadU16(data, lsbOffset)),
 			}
 			lsbOffset += 2
 		}
@@ -262,8 +262,8 @@ func (font *Font) Kern() ([]KernSubtable, error) {
 		return nil, fmt.Errorf("kern table too short: %d bytes", len(data))
 	}
 
-	version := readU16(data, 0)
-	nTables := int(readU16(data, 2))
+	version := ReadU16(data, 0)
+	nTables := int(ReadU16(data, 2))
 
 	// Apple AAT kern table version 1.0 has uint32 nTables at offset 4.
 	// We only support Microsoft/OpenType version 0.
@@ -277,9 +277,9 @@ func (font *Font) Kern() ([]KernSubtable, error) {
 		if pos+6 > len(data) {
 			return nil, fmt.Errorf("kern subtable %d header exceeds table", i)
 		}
-		subVersion := readU16(data, pos)
-		subLength := int(readU16(data, pos+2))
-		coverage := readU16(data, pos+4)
+		subVersion := ReadU16(data, pos)
+		subLength := int(ReadU16(data, pos+2))
+		coverage := ReadU16(data, pos+4)
 
 		subFormat := uint8(coverage & 0xFF)
 		horizontal := coverage&0x8000 != 0
@@ -305,7 +305,7 @@ func (font *Font) Kern() ([]KernSubtable, error) {
 			if len(pairsData) < 8 {
 				return nil, fmt.Errorf("kern subtable %d format 0 header too short", i)
 			}
-			nPairs := int(readU16(pairsData, 0))
+			nPairs := int(ReadU16(pairsData, 0))
 			pairStart := 8 // skip searchRange, entrySelector, rangeShift
 			if pairStart+nPairs*6 > len(pairsData) {
 				return nil, fmt.Errorf("kern subtable %d pairs exceed subtable", i)
@@ -314,9 +314,9 @@ func (font *Font) Kern() ([]KernSubtable, error) {
 			for j := 0; j < nPairs; j++ {
 				off := pairStart + j*6
 				sub.Pairs[j] = KernPair{
-					Left:  readU16(pairsData, off),
-					Right: readU16(pairsData, off+2),
-					Value: int16(readU16(pairsData, off+4)),
+					Left:  ReadU16(pairsData, off),
+					Right: ReadU16(pairsData, off+2),
+					Value: int16(ReadU16(pairsData, off+4)),
 				}
 			}
 		}
@@ -430,22 +430,22 @@ func (font *Font) OS2() (OS2, error) {
 	}
 
 	os2 := OS2{
-		Version:             readU16(data, 0),
-		XAvgCharWidth:       int16(readU16(data, 2)),
-		WeightClass:         readU16(data, 4),
-		WidthClass:          readU16(data, 6),
-		Type:                readU16(data, 8),
-		SubscriptXSize:      int16(readU16(data, 10)),
-		SubscriptYSize:      int16(readU16(data, 12)),
-		SubscriptXOffset:    int16(readU16(data, 14)),
-		SubscriptYOffset:    int16(readU16(data, 16)),
-		SuperscriptXSize:    int16(readU16(data, 18)),
-		SuperscriptYSize:    int16(readU16(data, 20)),
-		SuperscriptXOffset:  int16(readU16(data, 22)),
-		SuperscriptYOffset:  int16(readU16(data, 24)),
-		StrikeoutSize:       int16(readU16(data, 26)),
-		StrikeoutPosition:   int16(readU16(data, 28)),
-		FamilyClass:         int16(readU16(data, 30)),
+		Version:             ReadU16(data, 0),
+		XAvgCharWidth:       int16(ReadU16(data, 2)),
+		WeightClass:         ReadU16(data, 4),
+		WidthClass:          ReadU16(data, 6),
+		Type:                ReadU16(data, 8),
+		SubscriptXSize:      int16(ReadU16(data, 10)),
+		SubscriptYSize:      int16(ReadU16(data, 12)),
+		SubscriptXOffset:    int16(ReadU16(data, 14)),
+		SubscriptYOffset:    int16(ReadU16(data, 16)),
+		SuperscriptXSize:    int16(ReadU16(data, 18)),
+		SuperscriptYSize:    int16(ReadU16(data, 20)),
+		SuperscriptXOffset:  int16(ReadU16(data, 22)),
+		SuperscriptYOffset:  int16(ReadU16(data, 24)),
+		StrikeoutSize:       int16(ReadU16(data, 26)),
+		StrikeoutPosition:   int16(ReadU16(data, 28)),
+		FamilyClass:         int16(ReadU16(data, 30)),
 		Panose: Panose{
 			FamilyType:      data[32],
 			SerifStyle:      data[33],
@@ -465,15 +465,15 @@ func (font *Font) OS2() (OS2, error) {
 			readU32(data, 54),
 		},
 		VendorID:       string(data[58:62]),
-		Selection:      readU16(data, 62),
-		FirstCharIndex: readU16(data, 64),
-		LastCharIndex:  readU16(data, 66),
+		Selection:      ReadU16(data, 62),
+		FirstCharIndex: ReadU16(data, 64),
+		LastCharIndex:  ReadU16(data, 66),
 		// Offsets 68-77: present in all versions (v0+).
-		TypoAscender:  int16(readU16(data, 68)),
-		TypoDescender: int16(readU16(data, 70)),
-		TypoLineGap:   int16(readU16(data, 72)),
-		WinAscent:     readU16(data, 74),
-		WinDescent:    readU16(data, 76),
+		TypoAscender:  int16(ReadU16(data, 68)),
+		TypoDescender: int16(ReadU16(data, 70)),
+		TypoLineGap:   int16(ReadU16(data, 72)),
+		WinAscent:     ReadU16(data, 74),
+		WinDescent:    ReadU16(data, 76),
 	}
 
 	// Code page range: version 1+ (offset 78-85, need 86 bytes).
@@ -487,11 +487,11 @@ func (font *Font) OS2() (OS2, error) {
 	// Version 2+: xHeight, capHeight, defaultChar, breakChar, maxContext.
 	// (offsets 86-95, need 96 bytes).
 	if len(data) >= 96 {
-		os2.XHeight = int16(readU16(data, 86))
-		os2.CapHeight = int16(readU16(data, 88))
-		os2.DefaultChar = readU16(data, 90)
-		os2.BreakChar = readU16(data, 92)
-		os2.MaxContext = readU16(data, 94)
+		os2.XHeight = int16(ReadU16(data, 86))
+		os2.CapHeight = int16(ReadU16(data, 88))
+		os2.DefaultChar = ReadU16(data, 90)
+		os2.BreakChar = ReadU16(data, 92)
+		os2.MaxContext = ReadU16(data, 94)
 	}
 
 	return os2, nil

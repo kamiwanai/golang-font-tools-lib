@@ -133,23 +133,23 @@ func (font *Font) NameRecords() ([]NameRecord, error) {
 	if len(name) < 6 {
 		return nil, fmt.Errorf("name table too short: %d bytes", len(name))
 	}
-	count := int(readU16(name, 2))
+	count := int(ReadU16(name, 2))
 	if count > MaxNameRecords {
 		return nil, fmt.Errorf("name table has %d records, exceeds limit %d", count, MaxNameRecords)
 	}
-	stringOffset := int(readU16(name, 4))
+	stringOffset := int(ReadU16(name, 4))
 	if len(name) < 6+count*12 {
 		return nil, fmt.Errorf("name records exceed table")
 	}
 	records := make([]NameRecord, 0, count)
 	for index := 0; index < count; index++ {
 		offset := 6 + index*12
-		platformID := readU16(name, offset)
-		encodingID := readU16(name, offset+2)
-		languageID := readU16(name, offset+4)
-		nameID := readU16(name, offset+6)
-		length := int(readU16(name, offset+8))
-		stringStart := stringOffset + int(readU16(name, offset+10))
+		platformID := ReadU16(name, offset)
+		encodingID := ReadU16(name, offset+2)
+		languageID := ReadU16(name, offset+4)
+		nameID := ReadU16(name, offset+6)
+		length := int(ReadU16(name, offset+8))
+		stringStart := stringOffset + int(ReadU16(name, offset+10))
 		if stringStart < 0 || stringStart+length > len(name) {
 			return nil, fmt.Errorf("name string exceeds table")
 		}
@@ -173,7 +173,7 @@ func (font *Font) NumGlyphs() (int, error) {
 	if len(maxp) < 6 {
 		return 0, fmt.Errorf("maxp table too short: %d bytes", len(maxp))
 	}
-	return int(readU16(maxp, 4)), nil
+	return int(ReadU16(maxp, 4)), nil
 }
 
 // GlyphOrder returns glyph names by glyph ID.
@@ -229,13 +229,13 @@ func (font *Font) GlyphOrder() ([]string, error) {
 	if len(post) < 34 {
 		return nil, fmt.Errorf("post format 2 table too short: %d bytes", len(post))
 	}
-	postGlyphs := int(readU16(post, 32))
+	postGlyphs := int(ReadU16(post, 32))
 	if len(post) < 34+postGlyphs*2 {
 		return nil, fmt.Errorf("post glyph name indexes exceed table")
 	}
 	indexes := make([]uint16, postGlyphs)
 	for index := 0; index < postGlyphs; index++ {
-		indexes[index] = readU16(post, 34+index*2)
+		indexes[index] = ReadU16(post, 34+index*2)
 	}
 	customNames, err := readPostCustomNames(post[34+postGlyphs*2:])
 	if err != nil {
@@ -291,7 +291,7 @@ func (font *Font) BestCmap() (map[uint32]uint16, error) {
 	if len(cmap) < 4 {
 		return nil, fmt.Errorf("cmap table too short: %d bytes", len(cmap))
 	}
-	numTables := int(readU16(cmap, 2))
+	numTables := int(ReadU16(cmap, 2))
 	if len(cmap) < 4+numTables*8 {
 		return nil, fmt.Errorf("cmap encoding records exceed table")
 	}
@@ -299,14 +299,14 @@ func (font *Font) BestCmap() (map[uint32]uint16, error) {
 	for index := 0; index < numTables; index++ {
 		offset := 4 + index*8
 		record := cmapRecord{
-			platformID: readU16(cmap, offset),
-			encodingID: readU16(cmap, offset+2),
+			platformID: ReadU16(cmap, offset),
+			encodingID: ReadU16(cmap, offset+2),
 			offset:     readU32(cmap, offset+4),
 		}
 		if int(record.offset)+2 > len(cmap) {
 			continue
 		}
-		record.format = readU16(cmap, int(record.offset))
+		record.format = ReadU16(cmap, int(record.offset))
 		records = append(records, record)
 	}
 	sort.SliceStable(records, func(i, j int) bool {
@@ -389,11 +389,11 @@ func decodeCmapFormat4(data []byte) (map[uint32]uint16, error) {
 	if len(data) < 16 {
 		return nil, fmt.Errorf("cmap format 4 too short: %d bytes", len(data))
 	}
-	length := int(readU16(data, 2))
+	length := int(ReadU16(data, 2))
 	if length > len(data) {
 		return nil, fmt.Errorf("cmap format 4 length exceeds table")
 	}
-	segCount := int(readU16(data, 6) / 2)
+	segCount := int(ReadU16(data, 6) / 2)
 	if segCount > MaxCmapFormat4Segments {
 		return nil, fmt.Errorf("cmap format 4 has %d segments, exceeds limit %d", segCount, MaxCmapFormat4Segments)
 	}
@@ -406,11 +406,11 @@ func decodeCmapFormat4(data []byte) (map[uint32]uint16, error) {
 	}
 	mapping := make(map[uint32]uint16)
 	for segment := 0; segment < segCount; segment++ {
-		endCode := readU16(data, endCodeOffset+segment*2)
-		startCode := readU16(data, startCodeOffset+segment*2)
-		idDelta := int16(readU16(data, idDeltaOffset+segment*2))
+		endCode := ReadU16(data, endCodeOffset+segment*2)
+		startCode := ReadU16(data, startCodeOffset+segment*2)
+		idDelta := int16(ReadU16(data, idDeltaOffset+segment*2))
 		idRangeOffsetPos := idRangeOffsetOffset + segment*2
-		idRangeOffset := readU16(data, idRangeOffsetPos)
+		idRangeOffset := ReadU16(data, idRangeOffsetPos)
 		if endCode < startCode {
 			return nil, fmt.Errorf("cmap format 4 segment end before start")
 		}
@@ -426,7 +426,7 @@ func decodeCmapFormat4(data []byte) (map[uint32]uint16, error) {
 				if glyphOffset+2 > length {
 					continue
 				}
-				glyphID = readU16(data, glyphOffset)
+				glyphID = ReadU16(data, glyphOffset)
 				if glyphID != 0 {
 					glyphID = uint16(int(glyphID) + int(idDelta))
 				}
@@ -463,14 +463,14 @@ func decodeNameText(platformID uint16, data []byte) string {
 		}
 		codes := make([]uint16, len(data)/2)
 		for index := range codes {
-			codes[index] = readU16(data, index*2)
+			codes[index] = ReadU16(data, index*2)
 		}
 		return string(utf16.Decode(codes))
 	}
 	return string(data)
 }
 
-func readU16(data []byte, offset int) uint16 {
+func ReadU16(data []byte, offset int) uint16 {
 	return binary.BigEndian.Uint16(data[offset : offset+2])
 }
 
@@ -522,7 +522,7 @@ func ParseCollection(data []byte) (*Collection, error) {
 	if tag != "ttcf" {
 		return nil, fmt.Errorf("not a TTC: tag %q, want \"ttcf\"", tag)
 	}
-	version := readU16(data, 4)
+	version := ReadU16(data, 4)
 	if version != 1 && version != 2 {
 		return nil, fmt.Errorf("TTC version %d not supported", version)
 	}
