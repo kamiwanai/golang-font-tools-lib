@@ -1,3 +1,7 @@
+// Copyright (c) 2026 kamiwanai. All rights reserved.
+// Licensed under the MIT License. See LICENSE for details.
+// Commercial licensing: inari1337@gmail.com
+
 package opentype
 
 import (

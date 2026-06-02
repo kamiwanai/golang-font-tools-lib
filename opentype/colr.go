@@ -1,6 +1,6 @@
 // Copyright (c) 2026 kamiwanai. All rights reserved.
-// Licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
-// See LICENSE for details. Commercial licensing: inari1337@gmail.com
+// Licensed under the MIT License. See LICENSE for details.
+// Commercial licensing: inari1337@gmail.com
 
 package opentype
 
@@ -56,18 +56,11 @@ func (font *Font) COLR() (*COLRTable, error) {
 	layerRecordsOffset := int(binary.BigEndian.Uint32(data[8:]))
 	numLayerRecords := int(binary.BigEndian.Uint16(data[12:]))
 
-	if version == 0 {
-		return parseCOLRv0(data, numBaseGlyphRecords, baseGlyphRecordsOffset,
-			layerRecordsOffset, numLayerRecords)
-	}
-
-	// COLRv1 — parse only the v0-compatible base glyph list for now.
-	// v1 has additional BaseGlyphV1List at offset 16.
 	return parseCOLRv0(data, numBaseGlyphRecords, baseGlyphRecordsOffset,
-		layerRecordsOffset, numLayerRecords)
+		layerRecordsOffset, numLayerRecords, version)
 }
 
-func parseCOLRv0(data []byte, numBaseGlyphs, baseOff, layerOff, numLayers int) (*COLRTable, error) {
+func parseCOLRv0(data []byte, numBaseGlyphs, baseOff, layerOff, numLayers int, version uint16) (*COLRTable, error) {
 	// Read layer records first
 	layers := make([]ColorLayer, numLayers)
 	for i := 0; i < numLayers; i++ {
@@ -104,7 +97,7 @@ func parseCOLRv0(data []byte, numBaseGlyphs, baseOff, layerOff, numLayers int) (
 	}
 
 	return &COLRTable{
-		Version:    0,
+		Version:    version,
 		BaseGlyphs: baseGlyphs,
 	}, nil
 }

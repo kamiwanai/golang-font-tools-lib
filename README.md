@@ -193,34 +193,17 @@ Prints all GPOS kerning pairs to stdout.
 
 ---
 
-## License
+## Licensing
 
-**AGPL-3.0** — see [LICENSE](LICENSE).
+- **Open Source**: [MIT License](LICENSE) — free for open source and most commercial use
+- **Commercial License**: Required if you want to use in closed-source SaaS, remove attribution, get priority support, etc. — see [COMMERCIAL.md](COMMERCIAL.md)
 
-This means: you can use, modify, and distribute this library freely, but if you
-incorporate it into a network-accessible service or a larger work, the entire
-derivative work must be released under AGPL-3.0 with full source code.
-
-### Commercial license
-
-If AGPL-3.0 obligations do not fit your use case (closed-source product, SaaS
-backend, embedded firmware, etc.), a commercial license is available.
-
-| Scope | Price | What you get |
-|-------|-------|-------------|
-| Single product / company | $700/year | Proprietary license, no source disclosure obligation, 1 year of updates |
-| OEM / redistribution | $2,000/year | Sublicensing rights, custom terms |
-
-Contact: **kamiwanaiii@gmail.com**
-
-### Enforcement
-
-- Every source file carries a copyright header with license reference.
-- This repository is monitored for unlicensed use via automated code scanning.
-- Unauthorized use in a closed-source or network-accessible product without a
-  commercial license will be pursued. First step is a cease-and-desist; if
-  unresolved, formal legal action under AGPL-3.0 terms.
-- Estimated damages basis: commercial license price × years of unlicensed use.
+| Use case | License needed |
+|----------|---------------|
+| Open-source project | MIT (free) |
+| Commercial product with attribution | MIT (free) |
+| Closed-source SaaS, no attribution | [Commercial](COMMERCIAL.md) (from $100) |
+| Enterprise / OEM redistribution | [Commercial](COMMERCIAL.md) (custom) |
 
 ### Contributing
 
