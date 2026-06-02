@@ -310,3 +310,117 @@ func TestGoldenFonts_GVAR(t *testing.T) {
 		})
 	}
 }
+
+func TestGoldenFonts_STAT(t *testing.T) {
+	if len(goldenFonts) == 0 {
+		t.Skip("No golden font files")
+	}
+	for _, path := range goldenFonts {
+		t.Run(filepath.Base(path), func(t *testing.T) {
+			font, err := ParseFile(path)
+			if err != nil {
+				t.Fatalf("ParseFile: %v", err)
+			}
+			st, err := font.STATTable()
+			if err != nil {
+				t.Logf("STAT not present")
+				return
+			}
+			if st.MajorVersion == 0 {
+				t.Logf("STAT empty (v0)")
+				return
+			}
+			t.Logf("STAT v%d.%d: axes=%d values=%d elidedFallback=%d",
+				st.MajorVersion, st.MinorVersion, len(st.DesignAxes), len(st.AxisValues), st.ElidedFallbackNameID)
+			for _, ax := range st.DesignAxes {
+				t.Logf("  axis: tag=%s order=%d nameID=%d", ax.Tag, ax.AxisOrdering, ax.AxisNameID)
+			}
+		})
+	}
+}
+
+func TestGoldenFonts_HVAR(t *testing.T) {
+	if len(goldenFonts) == 0 {
+		t.Skip("No golden font files")
+	}
+	for _, path := range goldenFonts {
+		t.Run(filepath.Base(path), func(t *testing.T) {
+			font, err := ParseFile(path)
+			if err != nil {
+				t.Fatalf("ParseFile: %v", err)
+			}
+			hv, err := font.HVARTable()
+			if err != nil {
+				t.Logf("HVAR not present")
+				return
+			}
+			t.Logf("HVAR v%d.%d: regions=%d hasAdvMap=%v hasLsbMap=%v",
+				hv.MajorVersion, hv.MinorVersion,
+				len(hv.ItemVariationStore.VariationRegions),
+				hv.AdvanceWidthMapping != nil, hv.LsbMapping != nil)
+		})
+	}
+}
+
+func TestGoldenFonts_MVAR(t *testing.T) {
+	if len(goldenFonts) == 0 {
+		t.Skip("No golden font files")
+	}
+	for _, path := range goldenFonts {
+		t.Run(filepath.Base(path), func(t *testing.T) {
+			font, err := ParseFile(path)
+			if err != nil {
+				t.Fatalf("ParseFile: %v", err)
+			}
+			mv, err := font.MVARTable()
+			if err != nil {
+				t.Logf("MVAR not present")
+				return
+			}
+			t.Logf("MVAR v%d.%d: records=%d regions=%d",
+				mv.MajorVersion, mv.MinorVersion,
+				len(mv.ValueRecords),
+				len(mv.ItemVariationStore.VariationRegions))
+			for _, rec := range mv.ValueRecords {
+				t.Logf("  record: tag=%s", rec.ValueTag)
+			}
+		})
+	}
+}
+
+func TestGoldenFonts_GSUBScripts(t *testing.T) {
+	if len(goldenFonts) == 0 {
+		t.Skip("No golden font files")
+	}
+	for _, path := range goldenFonts {
+		t.Run(filepath.Base(path), func(t *testing.T) {
+			font, err := ParseFile(path)
+			if err != nil {
+				t.Fatalf("ParseFile: %v", err)
+			}
+			scripts, err := font.GSUBScripts()
+			if err != nil {
+				t.Logf("GSUB not present")
+				return
+			}
+			t.Logf("scripts: %d", len(scripts))
+			for _, s := range scripts {
+				langCount := len(s.LangSys)
+				if s.DefaultLangSys != nil {
+					langCount++
+				}
+				t.Logf("  %s: %d lang systems", s.Tag, langCount)
+			}
+
+			features, err := font.GSUBFeatures()
+			if err != nil {
+				t.Logf("features not present")
+				return
+			}
+			t.Logf("features: %d", len(features))
+			for _, f := range features {
+				t.Logf("  %s: %d lookups", f.Tag, len(f.LookupListIndices))
+			}
+		})
+	}
+}
