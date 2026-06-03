@@ -9,6 +9,7 @@ tmp/
 # Local planning/release notes, not part of public docs.
 DEVELOPMENT.md
 OPEN_SOURCE_READINESS.md
+PLAN_*.md
 
 # Internal docs
 GAP_ANALYSIS.md
@@ -18,6 +19,7 @@ DEFERRED.md
 
 # Reference code from other projects (not library code)
 references/
+_kernflow/
 
 # CodeGraph local index
 .codegraph/
@@ -38,3 +40,6 @@ gpos/_b64_fmt2.txt
 gpos/gen_context.py
 gpos/gen_test.py
 gpos/_w.py
+
+# Scratch test files (not part of the test suite)
+*_fonttools_test.go
