@@ -1,45 +1,10 @@
+# Build artifacts
 *.exe
 *.test
 *.out
 coverage.txt
+
+# Build / dist directories
 dist/
 build/
 tmp/
-
-# Local planning/release notes, not part of public docs.
-DEVELOPMENT.md
-OPEN_SOURCE_READINESS.md
-PLAN_*.md
-
-# Internal docs
-GAP_ANALYSIS.md
-ROADMAP.md
-REFACTOR_VERDICT.md
-DEFERRED.md
-
-# Reference code from other projects (not library code)
-references/
-_kernflow/
-
-# CodeGraph local index
-.codegraph/
-
-# Code generators and scratch files
-_gen.py
-_gen_test.py
-_write_context.py
-_write_context2.py
-_write_context3.py
-_write_context4.py
-_write_vr.py
-_hvar_test_main.go
-cursivepos_test_temp.go
-
-# Generated / scratch data in subpackages
-gpos/_b64_fmt2.txt
-gpos/gen_context.py
-gpos/gen_test.py
-gpos/_w.py
-
-# Scratch test files (not part of the test suite)
-*_fonttools_test.go
